@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>千载一瞬 · 古人互动传记</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <div class="brand" id="topbar-brand">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></div>
+    <nav class="topnav">
+      <a href="#" id="nav-home">人物长廊</a>
+      <a href="#stage" id="nav-stage" style="display:none;">抉择之台</a>
+      <a href="#gallery" id="nav-gallery" style="display:none;">结局图鉴</a>
+    </nav>
+  </header>
+
+  <!-- ========== 人物长廊（Hub）========== -->
+  <section class="hero hub-hero" id="hub-section">
+    <div class="hero__kicker reveal">互动传记 · 分支抉择</div>
+    <h1 class="hero__title reveal" style="--i:1">千载一瞬</h1>
+    <div class="hero__en reveal" style="--i:2">THE ETERNAL CHOICE</div>
+    <p class="hero__tagline reveal" style="--i:3">历史不是过去。它是选择留下的形状。</p>
+    <p class="hero__intro reveal" style="--i:4">
+      从古人的传记进入，在命运的分岔口做出抉择。每解锁一种结局，
+      他们传世的作品上掩盖的尘埃便会少去一块——全部拂净后，作品将以三维之眼重见天日。
+      通关后更可延伸阅读相关传记书籍，并查询附近图书馆的馆藏信息。
+    </p>
+    <button id="start-btn" class="btn btn--solid reveal" style="--i:5">开始探索 ↓</button>
+    <div class="hero__rule reveal" style="--i:6"></div>
+
+    <!-- 角色卡片网格 -->
+    <div class="char-gallery">
+      <div class="section-head">
+        <span class="sec-en">THE CHRONICLE / 人物长廊</span>
+        <h2 class="sec-title">选择一位古人，替他再活一遍</h2>
+      </div>
+      <div id="char-grid" class="char-grid"></div>
+    </div>
+  </section>
+
+  <!-- ========== 抉择之台（角色详情页）========== -->
+  <section class="stage" id="stage" style="display:none;">
+    <div class="stage__back">
+      <button class="btn btn--ghost btn--sm" id="back-to-hub">← 返回长廊</button>
+    </div>
+    <div class="section-head">
+      <span class="sec-en">THE STAGE / 抉择之台</span>
+      <h2 class="sec-title" id="stage-title">你的每一笔，都是他的命</h2>
+    </div>
+
+    <div class="stage__grid">
+      <!-- 叙事面板 -->
+      <div class="panel story">
+        <div id="node-chapter" class="node-chapter"></div>
+        <div id="node-text" class="node-text"></div>
+        <div id="node-choices" class="node-choices"></div>
+        <div class="story__foot">提示：可按 <kbd>1</kbd> / <kbd>2</kbd> 快速抉择，<kbd>Esc</kbd> 关闭弹窗</div>
+      </div>
+
+      <!-- 三维画卷 -->
+      <div class="panel scroll">
+        <div class="scroll__head">
+          <div>
+            <div class="scroll__name" id="scroll-name">千里江山图 · 三维</div>
+            <div class="scroll__sub">每解锁一结局，尘埃少一块</div>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="scroll-canvas"></canvas>
+          <div class="canvas-hint">拖拽旋转 · 滚轮缩放</div>
+        </div>
+        <div class="progress">
+          <div class="progress__label">已拂尘 <span id="progress-count">0 / 6</span></div>
+          <div id="progress-bar" class="progress__bar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 结局图鉴 ========== -->
+  <section class="gallery" id="gallery" style="display:none;">
+    <div class="section-head section-head--row">
+      <div>
+        <span class="sec-en">THE ENDINGS / 结局图鉴</span>
+        <h2 class="sec-title" id="gallery-title">六段命运，六片尘埃</h2>
+      </div>
+      <button id="reset-progress" class="btn btn--ghost btn--sm">重头再来</button>
+    </div>
+    <div id="gallery-grid" class="gallery__grid"></div>
+  </section>
+
+  <!-- 书籍推荐面板 -->
+  <section class="books-panel" id="books-panel" style="display:none;">
+    <div class="section-head">
+      <span class="sec-en">THE LIBRARY / 延伸阅读</span>
+      <h2 class="sec-title" id="books-title">通关推荐</h2>
+    </div>
+    <div id="books-list" class="books-list"></div>
+  </section>
+
+  <!-- 走马灯分隔带 -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track" id="marquee-track"></div>
+  </div>
+
+  <footer class="site-foot">
+    <p>千载一瞬 —— 古人互动传记平台。叙事取材于各人物传记及相关史料，情节为互动演绎。</p>
+    <p>馆藏信息仅供参考，实际借阅情况以各馆系统为准。</p>
+  </footer>
+
+  <!-- 结局弹窗 -->
+  <div id="ending-modal" class="modal">
+    <div class="modal__panel">
+      <button id="modal-close" class="modal__close" aria-label="关闭">×</button>
+      <div id="ending-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 全部解锁提示 -->
+  <div id="complete-toast" class="toast">
+    <div class="toast__title"></div>
+    <div class="toast__sub"></div>
+  </div>
+
+  <!-- 依赖与脚本：router 先加载以便管理角色模块；motion 在 app 前初始化 -->
+  <script src="assets/three.min.js"></script>
+  <script src="assets/OrbitControls.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/viewer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
