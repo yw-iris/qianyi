@@ -18,6 +18,28 @@
       color: '#2e7d6b',
       script: 'js/characters/ximeng.js',
       thumb: 'assets/paintings/qianli_4k.png'
+    },
+    {
+      id: 'xizhi',
+      name: '王羲之',
+      en: 'WANG XIZHI',
+      era: '东晋',
+      year: '303–361',
+      tag: '书圣 · 兰亭一序',
+      color: '#3a6b8a',
+      script: 'js/characters/xizhi.js',
+      thumb: 'assets/images/lanting_thumb.jpg'
+    },
+    {
+      id: 'yanzhenqing',
+      name: '颜真卿',
+      en: 'YAN ZHENQING',
+      era: '唐',
+      year: '709–785',
+      tag: '忠烈 · 颜筋柳骨',
+      color: '#a8422e',
+      script: 'js/characters/yanzhenqing.js',
+      thumb: 'assets/images/jizhi_thumb.jpg'
     }
     /* 后续添加新角色只需在此追加一条：
      * { id: 'xxx', name: '...', en: '...', era: '...', script: 'js/characters/xxx.js', ... }
@@ -124,7 +146,7 @@
     });
 
     // 添加"敬请期待"占位卡
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 1; i++) {
       grid.appendChild(createPlaceholderCard(i));
     }
 
