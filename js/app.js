@@ -6,11 +6,26 @@
 (function () {
   'use strict';
 
+  /* 馆藏信息用的线性 SVG 图标（替代 emoji） */
+  const ICON_LIB =
+    '<svg class="lib-ico" viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M3 8 12 3l9 5"/>' +
+      '<path d="M4.5 8v11M9 8v11M15 8v11M19.5 8v11"/>' +
+      '<path d="M3 8h18M4 19h16"/>' +
+    '</svg>';
+  const ICON_BOOK =
+    '<svg class="lib-ico lib-ico--sm" viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M12 5c-2-1.5-5-1.5-7 0v13c2-1.5 5-1.5 7 0 2-1.5 5-1.5 7 0V5c-2-1.5-5-1.5-7 0z"/>' +
+      '<path d="M12 5v13"/>' +
+    '</svg>';
+
   /* ---------- 状态（按角色隔离）---------- */
   let currentChar = null;   // 当前角色对象 { id, meta, endings, story, books }
   let state = {
     node: 'start',
-    unlocked: new Set()
+    unlocked: new Set(),
+    path: [],                 // 当前抉择路径上的节点 id（不含结局节点）
+    currentEndingNodeId: null // 本次到达的结局节点 key
   };
   let viewer = null;
 
@@ -69,6 +84,8 @@
   function enterStage(charData) {
     currentChar = charData;
     state.unlocked = loadUnlocked();
+    state.path = [];
+    state.currentEndingNodeId = null;
 
     // 更新 UI 标识
     el.scrollName.textContent = charData.meta.scrollName + ' · 三维';
@@ -135,7 +152,12 @@
     const node = currentChar.story[id];
     if (!node) return;
     state.node = id;
-    if (node.ending) { reachEnding(node); return; }
+    if (node.ending) { state.currentEndingNodeId = id; reachEnding(node); return; }
+
+    // 路径追踪：向前则追加，回退到已访问节点则截断其后
+    const idx = state.path.indexOf(id);
+    if (idx === -1) state.path.push(id);
+    else state.path.length = idx + 1;
 
     el.chapter.textContent = node.chapter || '';
     el.text.innerHTML = paragraphs(node.text);
@@ -176,6 +198,74 @@
   function findEndingMeta(id) {
     if (!currentChar || !currentChar.endings) return null;
     return currentChar.endings.find(e => e.id === id) || null;
+  }
+
+  /* 由 ending.id 反查其在 story 中的节点 key */
+  function findEndingNodeId(id) {
+    if (!currentChar) return null;
+    for (const k in currentChar.story)
+      if (currentChar.story[k].ending && currentChar.story[k].ending.id === id)
+        return k;
+    return null;
+  }
+
+  /* 从 start 经 choices BFS 找到通向 endingNodeId 的一条路径（含结局 key 于末尾） */
+  function tracePathTo(endingNodeId) {
+    const queue = [['start']];
+    const seen = new Set(['start']);
+    while (queue.length) {
+      const path = queue.shift();
+      const last = path[path.length - 1];
+      const node = currentChar.story[last];
+      if (!node) continue;
+      if (node.ending && last === endingNodeId) return path;
+      if (node.choices) {
+        for (const c of node.choices) {
+          if (!seen.has(c.next)) {
+            seen.add(c.next);
+            queue.push(path.concat(c.next));
+          }
+        }
+      }
+    }
+    return ['start'];
+  }
+
+  /* 优先用本次实际抉择路径；否则回溯出一条可达该结局的路径 */
+  function getAxisPath(endingNodeId) {
+    if (state.currentEndingNodeId === endingNodeId && state.path.length)
+      return state.path.concat(endingNodeId);
+    return tracePathTo(endingNodeId);
+  }
+
+  /* 构建抉择轴线 HTML（各选择节点可点击回溯，末尾为结局） */
+  function buildAxisHtml(endingNodeId) {
+    const path = getAxisPath(endingNodeId);
+    if (!path || path.length < 2) return '';
+    const endNode = currentChar.story[endingNodeId];
+    const endTitle = (endNode && endNode.ending && endNode.ending.title) ? endNode.ending.title : '结局';
+
+    const steps = path.slice(0, -1).map((nid, k) => {
+      const n = currentChar.story[nid];
+      const nextId = path[k + 1];
+      const ch = (n.choices && nextId) ? n.choices.find(c => c.next === nextId) : null;
+      return `<button type="button" class="axis__node" data-node="${nid}">` +
+               `<span class="axis__dot"></span>` +
+               `<span class="axis__ch">${n.chapter || '抉择'}</span>` +
+               `<span class="axis__choice">${ch ? ch.text : ''}</span>` +
+             `</button><span class="axis__line"></span>`;
+    }).join('');
+
+    const endHtml = `<span class="axis__node axis__node--end">` +
+       `<span class="axis__dot"></span>` +
+       `<span class="axis__ch">${endNode && endNode.chapter ? endNode.chapter : '结局'}</span>` +
+       `<span class="axis__choice">${endTitle}</span>` +
+     `</span>`;
+
+    return `<div class="choice-axis">` +
+             `<div class="axis__label">你的抉择之路 · 点击任一节点可回溯重选</div>` +
+             `<div class="axis__track">${steps}${endHtml}</div>` +
+           `</div>`;
   }
 
   /* ---------- 进度 ---------- */
@@ -235,14 +325,16 @@
   function openEndingModal(node, meta, isNew) {
     const e = node.ending;
     const allDone = state.unlocked.size >= TOTAL_ENDINGS();
+    const endingKey = findEndingNodeId(e.id);
     el.modalBody.innerHTML =
       `<div class="em__chapter">${node.chapter || ''}</div>` +
       `<h2 class="em__title">${meta ? meta.title : ''}</h2>` +
       `<div class="em__en">${meta ? meta.en : ''}${isNew ? ' · 新解锁' : ''}</div>` +
       `<div class="em__body">${paragraphs(e.body)}</div>` +
       `<blockquote class="em__epi">${e.epilogue}</blockquote>` +
+      buildAxisHtml(endingKey) +
       `<div class="em__actions">` +
-        `<button class="btn btn--ghost" data-act="restart">重历此生</button>` +
+        `<button class="btn btn--ghost" data-act="restart">重头再来</button>` +
         `<button class="btn btn--ghost" data-act="gallery">查看图鉴</button>` +
         (allDone && currentChar.books && currentChar.books.length
           ? `<button class="btn btn--solid" data-act="books">查看延伸阅读</button>`
@@ -264,6 +356,13 @@
           if (viewer) viewer.controls.autoRotate = true;
           el.stageSection.scrollIntoView({ behavior: 'smooth' });
         }
+      });
+    });
+    // 抉择轴线：点击节点回溯到该选择处重选
+    el.modalBody.querySelectorAll('.axis__node[data-node]').forEach((b) => {
+      b.addEventListener('click', () => {
+        closeModal();
+        renderNode(b.dataset.node);
       });
     });
     el.modal.classList.add('show');
@@ -297,7 +396,7 @@
 
       const libHtml = book.libraries.map(lib =>
         `<div class="blib ${lib.available ? '' : 'blib--unavail'}">
-           <span class="blib__icon">📚</span>
+           <span class="blib__icon">${ICON_BOOK}</span>
            <span class="blib__name">${lib.name}</span>
            <span class="blib__loc">${lib.location}</span>
            <span class="blib__call">索书号：${lib.callNumber}</span>
@@ -310,7 +409,7 @@
           `<div class="bc__meta">${book.author} · ${book.publisher} (${book.year}) · ISBN ${book.isbn}</div>` +
           `<p class="bc__summary">${book.summary}</p>` +
           (book.libraries && book.libraries.length
-            ? `<div class="bc__libraries"><strong style="font-size:.82rem;color:#5a4a32;">🏛 馆藏信息</strong>${libHtml}</div>`
+            ? `<div class="bc__libraries"><strong style="font-size:.82rem;color:#5a4a32;display:flex;align-items:center;">${ICON_LIB}馆藏信息</strong>${libHtml}</div>`
             : '') +
         `</div>`;
 
@@ -333,9 +432,13 @@
     // 根据 URL hash 自动恢复或渲染 Hub 长廊
     Router.initFromHash();
 
-    // Hub 内事件
-    el.startBtn.addEventListener('click', () => {
+    // Hub 内事件（"开始探索"仅为指示，点击/回车滚动至人物长廊）
+    const scrollToGrid = () => {
       document.getElementById('char-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    el.startBtn.addEventListener('click', scrollToGrid);
+    el.startBtn.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); scrollToGrid(); }
     });
 
     // 返回长廊按钮
@@ -348,6 +451,8 @@
     el.resetBtn.addEventListener('click', () => {
       if (!confirm(`确定要拂去「${currentChar ? currentChar.meta.title : ''}」的所有已解锁结局、重头再来吗？`)) return;
       state.unlocked.clear();
+      state.path = [];
+      state.currentEndingNodeId = null;
       saveUnlocked();
       if (viewer) viewer.resetDust();
       updateProgress();

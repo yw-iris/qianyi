@@ -32,7 +32,7 @@
       他们传世的作品上掩盖的尘埃便会少去一块——全部拂净后，作品将以三维之眼重见天日。
       通关后更可延伸阅读相关传记书籍，并查询附近图书馆的馆藏信息。
     </p>
-    <button id="start-btn" class="btn btn--solid reveal" style="--i:5">开始探索 ↓</button>
+    <div id="start-btn" class="start-hint reveal" style="--i:5" role="button" tabindex="0" aria-label="开始探索">开始探索<span class="start-hint__arrow" aria-hidden="true">↓</span></div>
     <div class="hero__rule reveal" style="--i:6"></div>
 
     <!-- 角色卡片网格 -->
@@ -74,7 +74,7 @@
         </div>
         <div class="canvas-wrap">
           <canvas id="scroll-canvas"></canvas>
-          <div class="canvas-hint">拖拽旋转 · 滚轮缩放</div>
+          <div class="canvas-hint">拖拽旋转 · 滚轮缩放 · 双击放大</div>
         </div>
         <div class="progress">
           <div class="progress__label">已拂尘 <span id="progress-count">0 / 6</span></div>

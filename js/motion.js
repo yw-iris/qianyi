@@ -21,6 +21,21 @@
   let cover = null;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  /* 走马灯内容：历史相关的名言警句（不止一句） */
+  const HISTORY_QUOTES = [
+    '历史不是过去，它是选择留下的形状',
+    '前事之不忘，后事之师也 ——《史记》',
+    '以古为镜，可以知兴替 ——唐太宗',
+    '观今宜鉴古，无古不成今 ——《增广贤文》',
+    '欲知大道，必先为史 ——龚自珍',
+    '人事有代谢，往来成古今 ——孟浩然',
+    '千古兴亡多少事，悠悠，不尽长江滚滚流 ——辛弃疾',
+    '青山依旧在，几度夕阳红 ——《三国演义》',
+    '鉴于往事，有资于治道 ——《资治通鉴》',
+    '往者不可谏，来者犹可追 ——《论语》',
+    '温故而知新，可以为师矣 ——《论语》'
+  ];
+
   /* ---------- 初始化 ---------- */
   function init() {
     if (reduceMotion) { document.documentElement.classList.add('reduce-motion'); }
@@ -67,7 +82,7 @@
 
     // 自动构建走马灯（若存在容器）
     const mt = document.getElementById('marquee-track');
-    if (mt) buildMarquee('历史不是过去 · 它是选择留下的形状', mt);
+    if (mt) buildMarquee(HISTORY_QUOTES, mt);
   }
 
   /* ---------- 滚动揭示：观察新元素 ---------- */
@@ -149,11 +164,16 @@
   }
 
   /* ---------- 走马灯（可选外部调用，自动构建）---------- */
-  function buildMarquee(text, container) {
+  function buildMarquee(quotes, container) {
     const el = container || document.getElementById('marquee-track');
     if (!el) return;
-    const items = Array.from({ length: 8 }, () => `<span class="marquee__item">${text}</span>`).join('');
-    el.innerHTML = items + items; // 重复两份以无缝循环
+    const list = (Array.isArray(quotes) ? quotes : [quotes]).filter(Boolean);
+    if (!list.length) return;
+    const set = list.map((q) =>
+      `<span class="marquee__item">${q}</span>` +
+      `<span class="marquee__sep" aria-hidden="true">◆</span>`
+    ).join('');
+    el.innerHTML = set + set; // 重复两份以无缝循环
   }
 
   /* ---------- 对外 API ---------- */

@@ -25,6 +25,11 @@
       this.complete = false;
       this.mode = null;
 
+      // 双击缩放：开关式放大，到位后交还滚轮自由控制
+      this._zoomed = false;    // 双击放大开关
+      this._zoomDist = null;   // 目标取景距离；到位后置 null
+      this._baseDist = 12;
+
       this._initMode();
       this.setPainting(this.defaultSrc, true);
       if (this.mode === '3d') {
@@ -70,6 +75,9 @@
       this.controls.maxPolarAngle = Math.PI * 0.72;
       this.controls.autoRotateSpeed = 0.9;
       this.controls.target.set(0, 0, 0);
+
+      // 双击放大 / 还原（桌面端）
+      this.renderer.domElement.addEventListener('dblclick', () => this._toggleZoom());
 
       this.scene.add(new THREE.AmbientLight(0xffffff, 0.9));
       const dir = new THREE.DirectionalLight(0xfff2dc, 0.7);
@@ -225,9 +233,10 @@
       this.group.add(left); this.group.add(right);
 
       const dist = Math.max(8, totalW * 0.62);
+      this._baseDist = dist;
       this.camera.position.set(0, totalH * 0.15, dist);
-      this.controls.minDistance = dist * 0.5;
-      this.controls.maxDistance = dist * 2.2;
+      this.controls.minDistance = dist * 0.16;   // 允许更大的放大倍数
+      this.controls.maxDistance = dist * 2.4;
       this.controls.update();
       this._composeDust();
     }
@@ -247,8 +256,18 @@
         if (!this.complete && this.target.every((t, i) => this.progress[i] >= 1)) {
           this.complete = true;
           this.controls.autoRotate = true;
-          this.controls.minDistance = this.camera.position.length() * 0.45;
+          this.controls.minDistance = this._baseDist * 0.16;
           this.onComplete();
+        }
+        // 双击缩放：平滑逼近目标距离，到位后停止施加，交还滚轮自由控制
+        if (this._zoomDist != null) {
+          const off = this.camera.position.clone().sub(this.controls.target);
+          const d = off.length();
+          const nd = d + (this._zoomDist - d) * Math.min(1, dt * 5);
+          if (Math.abs(nd - d) > 1e-3) {
+            this.camera.position.copy(this.controls.target).add(off.setLength(nd));
+          }
+          if (Math.abs(nd - this._zoomDist) < 0.05) this._zoomDist = null;
         }
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
@@ -265,6 +284,16 @@
       this.renderer.setSize(w, h, false);
     }
 
+    /* ---------- 双击放大 / 还原 ---------- */
+    _toggleZoom() {
+      if (this.mode !== '3d') return;
+      this.controls.autoRotate = false;   // 手动观察时停止自动旋转
+      this._zoomed = !this._zoomed;
+      this._zoomDist = this._zoomed
+        ? Math.max(this.controls.minDistance, this._baseDist * 0.32)
+        : this._baseDist;
+    }
+
     /* ============ 平面降级模式 ============ */
     _initFallback2D() {
       this.canvas.style.display = 'none';
@@ -274,6 +303,7 @@
       img.className = 'fallback-img';
       img.alt = '千里江山图';
       this.fallbackImg = img;
+      img.addEventListener('dblclick', () => img.classList.toggle('is-zoomed'));
       wrap.appendChild(img);
 
       const overlay = document.createElement('div');
