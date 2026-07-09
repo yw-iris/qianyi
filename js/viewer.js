@@ -242,6 +242,9 @@
       this.controls.minDistance = dist * 0.16;   // 允许更大的放大倍数
       this.controls.maxDistance = dist * 2.4;
       this.controls.update();
+      // 记录初始机位与焦点，供退出放大弹窗时复位外层视角
+      this._homePos = this.camera.position.clone();
+      this._homeTarget = this.controls.target.clone();
       this._composeDust();
     }
 
@@ -288,7 +291,23 @@
       this.renderer.setSize(w, h, false);
     }
 
-    /* ---------- 双击放大：居中弹窗展示画卷全貌 ---------- */
+    /* ---------- 复位视角：退出放大弹窗时调用，避免外层仍停留在放大/平移状态 ---------- */
+    resetView() {
+      this._zoomed = false;
+      this._zoomDist = null;
+      if (this.mode === '2d') {
+        if (this.fallbackImg) this.fallbackImg.classList.remove('is-zoomed');
+        return;
+      }
+      if (this.controls) {
+        this.controls.autoRotate = false;
+        if (this._homeTarget) this.controls.target.copy(this._homeTarget);
+        if (this._homePos) this.camera.position.copy(this._homePos);
+        this.controls.update();
+      }
+    }
+
+    /* ---------- 双击放大：居中弹窗展示画卷全貌，支持缩放看局部 ---------- */
     _openLightbox() {
       const lb = document.getElementById('lightbox');
       if (!lb) return;
@@ -301,16 +320,84 @@
       }
       img.src = src;
       const cap = lb.querySelector('#lb-caption');
-      if (cap) cap.textContent = '千里江山图 · 细观';
+      if (cap) cap.textContent = '滚轮缩放观察局部 · 拖拽平移 · 点击空白或按 ESC 退出';
       lb.classList.add('is-show');
-      // 点击背景/关闭按钮/图片均可关闭
-      const close = () => lb.classList.remove('is-show');
-      lb.querySelector('#lb-close').onclick = close;
-      img.onclick = close;
-      lb.onclick = (e) => { if (e.target === lb) close(); };
-      // ESC 关闭
-      const onEsc = (ev) => { if (ev.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); } };
+
+      // 弹窗图片的缩放 / 平移状态
+      let scale = 1, tx = 0, ty = 0, dragging = false, sx = 0, sy = 0, moved = false;
+      const applyTransform = () => {
+        // 取消入场动画的持久 transform，确保行内缩放/平移始终生效
+        img.style.animation = 'none';
+        img.classList.toggle('is-zoomed', scale > 1);
+        img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+      };
+      const resetImg = () => {
+        scale = 1; tx = 0; ty = 0; moved = false;
+        img.style.transform = '';
+        img.style.animation = '';
+        img.classList.remove('is-zoomed');
+      };
+
+      const cleanup = () => {
+        img.removeEventListener('wheel', onWheel);
+        img.removeEventListener('pointerdown', onDown);
+        img.removeEventListener('click', onImgClick);
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        lb.removeEventListener('click', onBack);
+        document.removeEventListener('keydown', onEsc);
+      };
+      const close = () => {
+        lb.classList.remove('is-show');
+        resetImg();                 // 清空弹窗图片的缩放/平移变换
+        this.resetView();           // 复位外层 3D 视角，退出后不再残留放大状态
+        cleanup();
+      };
+
+      // 滚轮缩放（阻止冒泡，避免误触发底层 3D 相机或页面缩放）
+      const onWheel = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const f = ev.deltaY < 0 ? 1.12 : 1 / 1.12;
+        scale = Math.max(1, Math.min(5, scale * f));
+        if (scale === 1) { tx = 0; ty = 0; }
+        applyTransform();
+      };
+      // 放大后拖拽平移
+      const onDown = (ev) => {
+        if (scale <= 1) return;     // 未放大时点击图片用于关闭
+        dragging = true; moved = false; sx = ev.clientX; sy = ev.clientY;
+        if (img.setPointerCapture && ev.pointerId != null) {
+          try { img.setPointerCapture(ev.pointerId); } catch (e) {}
+        }
+      };
+      const onMove = (ev) => {
+        if (!dragging) return;
+        const dx = ev.clientX - sx, dy = ev.clientY - sy;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+        tx += dx; ty += dy; sx = ev.clientX; sy = ev.clientY;
+        applyTransform();
+      };
+      const onUp = () => { dragging = false; };
+      // 点击图片：未放大→关闭；已放大但仅轻点→关闭；拖拽平移→不关闭
+      const onImgClick = () => {
+        if (moved) { moved = false; return; }
+        close();
+      };
+      // 点击背景关闭
+      const onBack = (ev) => { if (ev.target === lb) close(); };
+      const onEsc = (ev) => { if (ev.key === 'Escape') close(); };
+
+      img.addEventListener('wheel', onWheel, { passive: false });
+      img.addEventListener('pointerdown', onDown);
+      img.addEventListener('click', onImgClick);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      lb.addEventListener('click', onBack);
       document.addEventListener('keydown', onEsc);
+
+      const closeBtn = lb.querySelector('#lb-close');
+      if (closeBtn) closeBtn.onclick = close;
     }
 
     /* ---------- （保留）相机距离缩放（供其他场景使用）---------- */

@@ -428,8 +428,13 @@ kbd{
   box-shadow:
     0 0 0 1px rgba(201,168,106,.15),
     0 30px 80px rgba(0,0,0,.6);
-  animation:lbRise .4s ease both;
+  animation:lbRise .4s ease;
+  cursor:zoom-in;
+  transform-origin:center center;
+  will-change:transform;
 }
+.lightbox__img.is-zoomed{cursor:grab;}
+.lightbox__img.is-zoomed:active{cursor:grabbing;}
 @keyframes lbRise{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
 .lightbox__caption{
   position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
