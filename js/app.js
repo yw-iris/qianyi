@@ -94,9 +94,30 @@
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
+  /* 延迟加载 Three.js（仅画作副本需要 3D，首屏不阻塞） */
+  let threeReady = false, threeLoading = false;
+  function ensureThreeJS() {
+    if (threeReady) return Promise.resolve();
+    if (threeLoading) return new Promise(r => { const id = setInterval(() => { if (threeReady) { clearInterval(id); r(); } }, 50); });
+    threeLoading = true;
+    return Promise.all([
+      loadScript('assets/three.min.js'),
+      loadScript('assets/OrbitControls.js')
+    ]).then(() => { threeReady = true; });
+  }
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = src; s.async = false;
+      s.onload = resolve; s.onerror = () => reject(new Error('script load failed: ' + src));
+      document.head.appendChild(s);
+    });
+  }
+
   /* ========== 进入角色（由 Router 调用）========== */
 
-  function enterStage(charData) {
+  async function enterStage(charData) {
     currentChar = charData;
     state.unlocked = loadUnlocked();
     state.path = [];
@@ -133,7 +154,8 @@
       if (state.unlocked.size >= TOTAL_ENDINGS()) renderMediaVideo();
       else hideMediaVideo();
     } else {
-      // ── 画作副本：ScrollViewer 三维画卷 ──
+      // ── 画作副本：ScrollViewer 三维画卷（延迟加载 Three.js）──
+      await ensureThreeJS();
       el.canvasWrap.style.display = '';
       el.mediaPortrait.style.display = 'none';
       el.mediaVideo.style.display = 'none';
