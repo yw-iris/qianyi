@@ -82,6 +82,8 @@
 
     // 开场一次性动画：触发全幅真迹缓推 + 墨色晕染拭去（k95 式开场）
     requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('is-loaded')));
+    // 兜底：3 秒后若仍未加载完成，强制显示（防止 JS 延迟/错误导致英雄图不可见）
+    setTimeout(() => { if (!document.body.classList.contains('is-loaded')) document.body.classList.add('is-loaded'); }, 3000);
 
     // 自动构建走马灯（若存在容器）
     const mt = document.getElementById('marquee-track');

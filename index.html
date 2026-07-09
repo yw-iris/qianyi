@@ -25,7 +25,7 @@
           <span class="ml"><span class="ml__i">千年笔墨</span></span>
           <span class="ml"><span class="ml__i">皆成选择</span></span>
         </h1>
-        <p class="prologue__sub reveal" style="--i:15">三件真实藏品，引出三段命运。向下滚动，入画。</p>
+        <p class="prologue__sub reveal" style="--i:15">传世真迹，引出数段命运。向下滚动，入画。</p>
         <div class="prologue__cue reveal" style="--i:17" aria-hidden="true"><span></span>向下</div>
       </div>
     </div>
@@ -73,7 +73,7 @@
 
     <!-- 藏品图鉴（滚动画卷后的静态归位展示） -->
     <div class="prologue-gallery reveal">
-      <div class="prologue-gallery__label">三件真迹 · 千载流传</div>
+      <div class="prologue-gallery__label">传世真迹 · 千载流传</div>
       <div class="prologue-gallery__grid">
         <div class="pg-card">
           <div class="pg-card__frame" style="background-image:url('assets/images/qianli.jpg')"></div>
@@ -173,18 +173,26 @@
         <div class="story__foot">提示：可按 <kbd>1</kbd> / <kbd>2</kbd> 快速抉择，<kbd>Esc</kbd> 关闭弹窗</div>
       </div>
 
-      <!-- 三维画卷 -->
+      <!-- 三维画卷 / 画像 · 影像志 -->
       <div class="panel scroll">
         <div class="scroll__head">
           <div>
             <div class="scroll__name" id="scroll-name">千里江山图 · 三维</div>
-            <div class="scroll__sub">每解锁一结局，尘埃少一块</div>
+            <div class="scroll__sub" id="scroll-sub">每解锁一结局，尘埃少一块</div>
           </div>
         </div>
-        <div class="canvas-wrap">
+        <!-- 3D 卷轴（画作副本） -->
+        <div class="canvas-wrap" id="canvas-wrap">
           <canvas id="scroll-canvas"></canvas>
           <div class="canvas-hint">拖拽旋转 · 滚轮缩放 · 双击放大</div>
         </div>
+        <!-- 画像（文人副本，通关前显示） -->
+        <div class="media-portrait" id="media-portrait" style="display:none;">
+          <img id="portrait-img" src="" alt="" />
+          <div class="mp__lock"><span>全部通关后解锁影像志</span></div>
+        </div>
+        <!-- 影像志视频（文人副本，通关后替换画像区域） -->
+        <div class="media-video" id="media-video" style="display:none;"></div>
         <div class="progress">
           <div class="progress__label">已拂尘 <span id="progress-count">0 / 6</span></div>
           <div id="progress-bar" class="progress__bar"></div>
@@ -211,7 +219,6 @@
       <span class="sec-en">THE LIBRARY / 延伸阅读</span>
       <h2 class="sec-title" id="books-title">通关推荐</h2>
     </div>
-    <div id="video-block" class="video-block" style="display:none;"></div>
     <div id="books-list" class="books-list"></div>
   </section>
 

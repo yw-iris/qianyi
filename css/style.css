@@ -448,17 +448,17 @@ kbd{
   .stage__grid{grid-template-columns:1fr;}
   .topnav{gap:1rem;font-size:.85rem;}
   .canvas-wrap{height:46vh;}
-  .char-grid{grid-template-columns:1fr 1fr;}
+  .char-grid{grid-template-columns:repeat(2, 1fr);gap:1.4rem;}
 }
 
 /* ========== 人物长廊（Hub）========== */
 .hub-hero{padding-bottom:2vh;}
-.char-gallery{max-width:1180px;margin:4vh auto 0;padding:0 1.6rem;}
+.char-gallery{max-width:1400px;margin:5vh auto 0;padding:0 1.8rem;}
 
-/* 角色卡片 */
+/* 角色卡片：桌面端固定 4 列，大气布局 */
 .char-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-  gap:1.8rem;align-items:start;
+  display:grid;grid-template-columns:repeat(4, 1fr);
+  gap:2rem;align-items:start;
 }
 .char-card{
   position:relative;border:1px solid var(--line);border-radius:4px;
@@ -475,7 +475,7 @@ kbd{
   font-size:.78rem;color:var(--gold);letter-spacing:.22em;z-index:2;
 }
 .cc__thumb{
-  width:100%;height:200px;overflow:hidden;background:#1a1510;display:flex;
+  width:100%;height:240px;overflow:hidden;background:#1a1510;display:flex;
   align-items:center;justify-content:center;
 }
 .cc__thumb img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .5s;}
@@ -564,9 +564,40 @@ kbd{
 @media (max-width:640px){
   .vblock__title{font-size:1rem;}
   .vblock__badge{font-size:.9rem;padding:.32rem .6rem;}
+  .char-grid{grid-template-columns:1fr;gap:1rem;}
+}
+/* 中等屏幕：3 列 */
+@media (max-width:1100px) and (min-width:641px){
+  .char-grid{grid-template-columns:repeat(3, 1fr);gap:1.6rem;}
 }
 
 /* 导航栏动态显隐 */
+
+/* ========== 画像 / 影像志（文人副本右侧面板）========== */
+.media-portrait{
+  position:relative;width:100%;min-height:46vh;background:#0c0a07;
+  border:1px solid var(--line-strong);border-radius:4px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.media-portrait img{
+  max-width:100%;max-height:56vh;object-fit:contain;object-position:center;
+  filter:drop-shadow(0 8px 30px rgba(0,0,0,.6));
+}
+.mp__lock{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,transparent,rgba(12,10,7,.9) 60%);
+  padding:1.8rem 1rem .9rem;text-align:center;
+}
+.mp__lock span{
+  font-family:var(--serif);font-size:.85rem;color:var(--gold);
+  letter-spacing:.14em;opacity:.7;
+}
+.media-video{
+  width:100%;
+}
+.media-video iframe{
+  width:100%;height:52vh;border:none;display:block;
+}
 .topnav a[style*="none"]{display:none !important;}
 
 /* ============================================================
@@ -652,7 +683,7 @@ body:hover .cursor{opacity:.9;}
   position:absolute;inset:0;z-index:0;
   background-size:cover;background-position:center 42%;
   transform:scale(1.16);opacity:0;
-  filter:saturate(.92) contrast(1.03) brightness(.92);
+  filter:saturate(1.05) contrast(1.02) brightness(1.08);
   will-change:transform,opacity;
 }
 .is-loaded .prologue__hero{
@@ -663,8 +694,8 @@ body:hover .cursor{opacity:.9;}
 .prologue__scrim{
   position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(120% 95% at 50% 42%, rgba(12,10,7,0) 28%, rgba(12,10,7,.6) 100%),
-    linear-gradient(180deg, rgba(12,10,7,.42) 0%, rgba(12,10,7,0) 28%, rgba(12,10,7,0) 62%, rgba(12,10,7,.72) 100%);
+    radial-gradient(120% 95% at 50% 42%, rgba(12,10,7,0) 35%, rgba(12,10,7,.45) 100%),
+    linear-gradient(180deg, rgba(12,10,7,.32) 0%, rgba(12,10,7,0) 30%, rgba(12,10,7,0) 65%, rgba(12,10,7,.6) 100%);
 }
 /* 墨色晕染层：载入后向右侧拭去，露出真迹（对应 k95 的色块冲刷） */
 .prologue__wash{

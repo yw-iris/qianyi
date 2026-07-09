@@ -66,6 +66,11 @@
     modalBody: $('#ending-modal-body'),
     toast: $('#complete-toast'),
     canvas: $('#scroll-canvas'),
+    canvasWrap: $('#canvas-wrap'),
+    scrollSub: $('#scroll-sub'),
+    mediaPortrait: $('#media-portrait'),
+    mediaVideo: $('#media-video'),
+    portraitImg: $('#portrait-img'),
     startBtn: $('#start-btn'),
 
     // 书籍面板（新增）
@@ -98,8 +103,11 @@
     state.path = [];
     state.currentEndingNodeId = null;
 
+    // 判断是否为文人传记副本（有配套影像志视频）
+    const hasVideo = !!(charData.meta && charData.meta.video);
+
     // 更新 UI 标识
-    el.scrollName.textContent = charData.meta.scrollName + ' · 三维';
+    el.scrollName.textContent = charData.meta.scrollName + (hasVideo ? ' · 影像' : ' · 三维');
     el.stageTitle.textContent = `「${charData.meta.title}」抉择之台`;
     el.galleryTitle.textContent =
       `${TOTAL_ENDINGS()}段命运，${TOTAL_ENDINGS()}片尘埃`;
@@ -112,20 +120,41 @@
     el.navStage.style.display = '';
     el.navGallery.style.display = '';
 
-    // 初始化或重用 viewer
-    if (!viewer) {
-      viewer = new ScrollViewer(el.canvas, {
-        defaultSrc: charData.meta.scrollImage,
-        onComplete: onAllClear
-      });
+    /* ---------- 右侧面板：画作(3D) vs 文人(画像+视频) ---------- */
+    if (hasVideo) {
+      // ── 文人副本：画像 + 通关后视频 ──
+      el.canvasWrap.style.display = 'none';
+      el.mediaPortrait.style.display = '';
+      el.mediaVideo.style.display = 'none';
+      el.portraitImg.src = charData.meta.scrollImage;
+      el.portraitImg.alt = charData.meta.title + ' 画像';
+      el.scrollSub.textContent = '画像 · 通关解锁影像志';
+
+      // 若已全通关，直接显示视频
+      if (state.unlocked.size >= TOTAL_ENDINGS()) renderMediaVideo();
+      else hideMediaVideo();
     } else {
-      viewer.setPainting(charData.meta.scrollImage, true);
-      viewer.resetDust();
+      // ── 画作副本：ScrollViewer 三维画卷 ──
+      el.canvasWrap.style.display = '';
+      el.mediaPortrait.style.display = 'none';
+      el.mediaVideo.style.display = 'none';
+      el.scrollSub.textContent = '每解锁一结局，尘埃少一块';
+
+      // 初始化或重用 viewer
+      if (!viewer) {
+        viewer = new ScrollViewer(el.canvas, {
+          defaultSrc: charData.meta.scrollImage,
+          onComplete: onAllClear
+        });
+      } else {
+        viewer.setPainting(charData.meta.scrollImage, true);
+        viewer.resetDust();
+      }
+      // 恢复已解锁的尘块
+      charData.endings.forEach(e => {
+        if (state.unlocked.has(e.id)) viewer.clearRegion(e.region, true);
+      });
     }
-    // 恢复已解锁的尘块
-    charData.endings.forEach(e => {
-      if (state.unlocked.has(e.id)) viewer.clearRegion(e.region, true);
-    });
 
     updateProgress();
     renderGallery();
@@ -231,9 +260,11 @@
     renderGallery();
     openEndingModal(node, meta, isNew);
 
-    // 如果刚全部解锁，渲染书籍面板
+    // 如果刚全部解锁，渲染书籍面板 + 文人副本视频
     if (state.unlocked.size >= TOTAL_ENDINGS()) {
       renderBooks(true); // 高亮模式
+      // 文人副本：通关后在右侧面板展示影像志
+      if (currentChar && currentChar.meta && currentChar.meta.video) renderMediaVideo();
     }
   }
 
@@ -419,41 +450,52 @@
     el.toast.classList.add('show');
     setTimeout(() => el.toast.classList.remove('show'), 6000);
     renderBooks(true);
+    // 文人副本：通关后显示影像志视频
+    if (currentChar && currentChar.meta && currentChar.meta.video) renderMediaVideo();
+  }
+
+  /* ========== 文人副本：画像 / 影像志切换 ========== */
+
+  /** 通关后，在右侧面板渲染 B站影像志视频（替换画像区域）*/
+  function renderMediaVideo() {
+    if (!currentChar || !currentChar.meta || !currentChar.meta.video) return;
+    if (!el.mediaVideo) return;
+    const v = currentChar.meta.video;
+    el.mediaPortrait.style.display = 'none';
+    el.mediaVideo.style.display = '';
+    el.scrollSub.textContent = '影像志 · 已解锁';
+    el.mediaVideo.innerHTML =
+      `<div class="vblock__head">` +
+        `<span class="vblock__badge">影像志</span>` +
+        `<div class="vblock__meta">` +
+          `<h3 class="vblock__title">${v.title}</h3>` +
+          `<div class="vblock__sub">${v.uploader} · 「${v.groupTitle || '传记影像'}」 · 时长 ${fmtDuration(v.duration)}</div>` +
+        `</div>` +
+      `</div>` +
+      `<div class="vblock__frame">` +
+        `<iframe src="//player.bilibili.com/player.html?bvid=${v.bvid}&page=1&high_quality=1&danmaku=0" ` +
+          `scrolling="no" border="0" frameborder="no" framespacing="0" ` +
+          `allowfullscreen="true" loading="lazy" ` +
+          `referrerpolicy="no-referrer-when-downgrade"` +
+          `title="${v.title}"></iframe>` +
+      `</div>`;
+  }
+
+  /** 隐藏视频，恢复显示画像区域 */
+  function hideMediaVideo() {
+    if (!el.mediaPortrait || !el.mediaVideo) return;
+    el.mediaPortrait.style.display = '';
+    el.mediaVideo.style.display = 'none';
+    el.scrollSub.textContent = '画像 · 通关解锁影像志';
+    el.mediaVideo.innerHTML = '';
   }
 
   /* ========== 书籍推荐面板（新增）========== */
 
   function renderBooks(highlight) {
-    const videoBlock = document.getElementById('video-block');
-    // 影像志：文人传记副本的配套传记视频（B 站）
-    if (currentChar && currentChar.meta && currentChar.meta.video && videoBlock) {
-      const v = currentChar.meta.video;
-      videoBlock.style.display = '';
-      videoBlock.innerHTML =
-        `<div class="vblock__head">` +
-          `<span class="vblock__badge">影像志</span>` +
-          `<div class="vblock__meta">` +
-            `<h3 class="vblock__title">${v.title}</h3>` +
-            `<div class="vblock__sub">${v.uploader} · 「${v.groupTitle || '传记影像'}」 · 时长 ${fmtDuration(v.duration)}</div>` +
-          `</div>` +
-        `</div>` +
-        `<div class="vblock__frame">` +
-          `<iframe src="//player.bilibili.com/player.html?bvid=${v.bvid}&page=1&high_quality=1&danmaku=0" ` +
-            `scrolling="no" border="0" frameborder="no" framespacing="0" ` +
-            `allowfullscreen="true" loading="lazy" ` +
-            `referrerpolicy="no-referrer-when-downgrade"` +
-            `title="${v.title}"></iframe>` +
-        `</div>` +
-        `<p class="vblock__note">影像为第三方传记资料（${v.uploader} 制作），仅供延伸理解，非本副本剧情。</p>`;
-    } else if (videoBlock) {
-      videoBlock.style.display = 'none';
-      videoBlock.innerHTML = '';
-    }
-
     if (!currentChar || !currentChar.books || !currentChar.books.length) {
-      if (!videoBlock || videoBlock.style.display === 'none') {
-        el.booksPanel.style.display = 'none'; return;
-      }
+      // 若无书籍且无视频（非文人副本），隐藏整个面板
+      el.booksPanel.style.display = 'none'; return;
     }
     el.booksPanel.style.display = '';
     el.booksTitle.textContent = `「${currentChar.meta.title}」延伸阅读`;
