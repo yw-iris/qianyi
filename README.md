@@ -8,7 +8,9 @@
 
 ## 在线体验
 
-（GitHub Pages 部署后在此填入链接）
+🌐 **https://yw-iris.github.io/qianyi/**
+
+> 纯静态部署，无需任何构建步骤。
 
 ## 快速开始
 
