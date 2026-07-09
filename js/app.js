@@ -71,7 +71,10 @@
     // 书籍面板（新增）
     booksPanel: $('#books-panel'),
     booksList: $('#books-list'),
-    booksTitle: $('#books-title')
+    booksTitle: $('#books-title'),
+
+    // 返回封面（新增）
+    backToCover: $('#back-to-cover')
   };
 
   /* ---------- 文案分段 ---------- */
@@ -123,7 +126,6 @@
     // 从 start 节点开始
     renderNode('start');
     if (window.Motion) { Motion.refresh(); Motion.bindMagnetic(el.stageSection); }
-    el.startBtn.click(); // 滚动到舞台区
   }
 
   function leaveStage() {
@@ -562,6 +564,14 @@
 
     // 返回长廊按钮
     el.backBtn.addEventListener('click', () => Router.goHome());
+
+    // 返回封面页：恢复长廊显示并平滑滚回文档最顶端的封面
+    if (el.backToCover) {
+      el.backToCover.addEventListener('click', () => {
+        Router.goHome();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
 
     // 导航栏：品牌点击返回主页
     el.topbarBrand.addEventListener('click', (ev) => { ev.preventDefault(); Router.goHome(); });
