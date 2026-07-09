@@ -71,7 +71,6 @@
     mediaPortrait: $('#media-portrait'),
     mediaVideo: $('#media-video'),
     portraitImg: $('#portrait-img'),
-    startBtn: $('#start-btn'),
 
     // 书籍面板（新增）
     booksPanel: $('#books-panel'),
@@ -138,6 +137,7 @@
       el.canvasWrap.style.display = '';
       el.mediaPortrait.style.display = 'none';
       el.mediaVideo.style.display = 'none';
+      el.mediaVideo.innerHTML = '';   // 清除切换自文人副本时残留的影像志 iframe
       el.scrollSub.textContent = '每解锁一结局，尘埃少一块';
 
       // 初始化或重用 viewer
@@ -601,19 +601,6 @@
       // 无按钮时：prologue 滚出视口后自动显示顶栏（IntersectionObserver 已处理）
       // 用户自然滚动到 hub 即可
     }
-    // 若用户提供 assets/images/jizhi.jpg，则把"题版"切换为手卷平移
-    const yanFrame = document.getElementById('yan-frame');
-    if (yanFrame) {
-      const test = new Image();
-      test.onload = () => {
-        yanFrame.style.backgroundImage = "url('assets/images/jizhi.jpg')";
-        yanFrame.classList.add('act__frame--scroll');
-        yanFrame.classList.remove('act__frame--yan');
-        const txt = document.getElementById('yan-text');
-        if (txt) txt.style.display = 'none';
-      };
-      test.src = 'assets/images/jizhi.jpg';
-    }
   }
 
   /* ---------- 初始化 ---------- */
@@ -635,10 +622,6 @@
     const scrollToGrid = () => {
       document.getElementById('char-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
-    el.startBtn.addEventListener('click', scrollToGrid);
-    el.startBtn.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); scrollToGrid(); }
-    });
 
     // 返回长廊按钮
     el.backBtn.addEventListener('click', () => Router.goHome());

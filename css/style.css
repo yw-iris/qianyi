@@ -671,95 +671,107 @@ body:hover .cursor{opacity:.9;}
 .reduce-motion .marquee__track{animation:none!important;}
 
 /* ============================================================
- *  开场（真实藏品 · k95 风）
+ *  开场（电影感 · 参照 tongjian.yongle.school，保留藏品卡片区）
  * ============================================================ */
 .prologue{position:relative;background:#0c0a07;color:var(--text-ink);}
 .prologue__intro{
   position:relative;min-height:100vh;overflow:hidden;
   background:#0c0a07;
 }
-/* 真迹作底：载入后缓慢推近（ken-burns），先见画、后见字（k95 式开场） */
+/* 真迹作底：载入后缓慢推近（电影感 ken-burns） */
 .prologue__hero{
   position:absolute;inset:0;z-index:0;
-  background-size:cover;background-position:center 42%;
-  transform:scale(1.16);opacity:0;
-  filter:saturate(1.05) contrast(1.02) brightness(1.08);
+  background-size:cover;background-position:center 40%;
+  transform:scale(1.22);opacity:0;
+  filter:saturate(.9) contrast(1.06) brightness(.72);
   will-change:transform,opacity;
 }
 .is-loaded .prologue__hero{
-  opacity:1;transform:scale(1);
-  transition:transform 3s cubic-bezier(.16,1,.3,1), opacity 1.3s ease;
+  opacity:1;transform:scale(1.03);
+  transition:transform 8s cubic-bezier(.16,1,.3,1), opacity 1.6s ease;
 }
-/* 常驻暗角：真迹偏亮，保证标题可读 */
+/* 暗角 + 左侧加深（文字左对齐，保证可读与冲击力） */
 .prologue__scrim{
   position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(120% 95% at 50% 42%, rgba(12,10,7,0) 35%, rgba(12,10,7,.45) 100%),
-    linear-gradient(180deg, rgba(12,10,7,.32) 0%, rgba(12,10,7,0) 30%, rgba(12,10,7,0) 65%, rgba(12,10,7,.6) 100%);
+    linear-gradient(100deg, rgba(6,4,2,.94) 0%, rgba(6,4,2,.5) 34%, rgba(6,4,2,0) 60%),
+    radial-gradient(130% 100% at 50% 45%, rgba(12,10,7,0) 28%, rgba(12,10,7,.74) 100%);
 }
-/* 墨色晕染层：载入后向右侧拭去，露出真迹（对应 k95 的色块冲刷） */
-.prologue__wash{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:linear-gradient(105deg,#0c0a07 0%,#15110b 46%,#0c0a07 100%);
-  clip-path:inset(0 0 0 0);
-}
-.is-loaded .prologue__wash{
-  clip-path:inset(0 0 0 100%);
-  transition:clip-path 1.5s cubic-bezier(.76,0,.24,1) .15s;
-}
-/* 入场瞬息金闪（k95 蓝块闪现之东方化） */
-.prologue__flash{
-  position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;
-  background:radial-gradient(closest-side at 50% 45%, rgba(201,168,106,.5), rgba(201,168,106,0) 70%);
-  opacity:0;
-}
-.is-loaded .prologue__flash{animation:introFlash 1.1s ease-out .4s both;}
-@keyframes introFlash{0%{opacity:0;}16%{opacity:.85;}100%{opacity:0;}}
-/* 文字层：独立于真迹之上居中 */
+/* 文字层：左对齐，垂直居中 */
 .prologue__intro-inner{
   position:relative;z-index:4;
-  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;gap:1.4rem;padding:3rem;
+  min-height:100vh;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  text-align:left;gap:1.4rem;padding:0 7vw;max-width:780px;
 }
-/* 微光粒子/墨点装饰 */
-.prologue__intro::before{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+/* 微光墨点氛围 */
+.prologue__intro::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(201,168,106,.04) 0%, transparent 50%),
-    radial-gradient(circle at 75% 60%, rgba(168,66,46,.03) 0%, transparent 45%),
-    radial-gradient(circle at 50% 85%, rgba(201,168,106,.02) 0%, transparent 55%);
+    radial-gradient(circle at 18% 26%, rgba(201,168,106,.06) 0%, transparent 42%),
+    radial-gradient(circle at 82% 64%, rgba(168,66,46,.04) 0%, transparent 40%),
+    radial-gradient(circle at 60% 88%, rgba(201,168,106,.03) 0%, transparent 50%);
 }
-.prologue__kicker{font-family:var(--serif-en);letter-spacing:.5em;font-size:.7rem;
-  text-transform:uppercase;color:var(--gold);opacity:.75;
-  position:relative;display:inline-block;padding-bottom:.4rem;}
+.prologue__kicker{font-family:var(--serif-en);letter-spacing:.48em;font-size:.72rem;
+  text-transform:uppercase;color:var(--gold);opacity:.82;
+  position:relative;display:inline-block;padding-bottom:.45rem;}
 .prologue__kicker::after{
-  content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:40px;height:1px;background:var(--gold);opacity:.4;}
+  content:"";position:absolute;bottom:0;left:0;
+  width:42px;height:1px;background:var(--gold);opacity:.5;}
 .prologue__title{
-  font-family:var(--calligraphy);font-weight:400;line-height:1.15;margin:0;
-  font-size:clamp(3rem,8vw,6.5rem);letter-spacing:.12em;
-  display:flex;flex-direction:column;align-items:center;
-  text-shadow:0 2px 40px rgba(201,168,106,.18);
+  font-family:var(--calligraphy);font-weight:400;line-height:1.05;margin:0;
+  font-size:clamp(3.2rem,10vw,8.5rem);letter-spacing:.06em;
+  display:flex;flex-direction:column;align-items:flex-start;
+  text-shadow:0 6px 60px rgba(0,0,0,.55);
 }
-/* 遮罩逐行揭示（k95 编辑式开场）*/
-.prologue__title.reveal{opacity:1;transform:none;}  /* 容器保持可见，位移由内部 ml__i 完成 */
-.prologue__title .ml{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em;}
+/* 遮罩逐行揭示 */
+.prologue__title.reveal{opacity:1;transform:none;}
+.prologue__title .ml{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em;}
 .prologue__title .ml__i{
-  display:block;transform:translateY(115%);
-  background:linear-gradient(180deg,#f3e7cc,#c9a86a 70%,#a8422e);
+  display:block;transform:translateY(118%);
+  background:linear-gradient(176deg,#f6ecd6 0%,#e4c78e 42%,#c9a86a 68%,#a8422e 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  transition:transform 1.05s cubic-bezier(.16,1,.3,1);
+  transition:transform 1.2s cubic-bezier(.16,1,.3,1);
   will-change:transform;
 }
 .prologue__title.is-visible .ml__i{transform:translateY(0);}
-.prologue__title .ml:nth-child(1) .ml__i{transition-delay:.7s;}
-.prologue__title .ml:nth-child(2) .ml__i{transition-delay:.92s;}
-.prologue__sub{max-width:30rem;color:var(--muted);font-size:1.02rem;line-height:1.8;margin:0;}
-.prologue__cue{margin-top:1.6rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
-  color:var(--gold);font-size:.74rem;letter-spacing:.3em;}
-.prologue__cue span{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);
+.prologue__title .ml:nth-child(1) .ml__i{transition-delay:.5s;}
+.prologue__title .ml:nth-child(2) .ml__i{transition-delay:.75s;}
+/* 副标题与正文：上移淡入 */
+.prologue__tagline{max-width:32rem;color:#e7d8b8;font-size:clamp(1rem,2vw,1.35rem);
+  line-height:1.7;margin:.3rem 0 0;letter-spacing:.04em;
+  font-family:var(--serif);font-style:normal;}
+.prologue__desc{max-width:36rem;color:#b3a484;font-size:clamp(.92rem,1.5vw,1.05rem);
+  line-height:1.9;margin:0;letter-spacing:.02em;}
+.prologue__tagline,.prologue__desc,.prologue__cta{opacity:0;transform:translateY(20px);
+  transition:opacity .85s ease,transform .85s cubic-bezier(.16,1,.3,1);}
+.prologue__tagline{transition-delay:.85s;}
+.prologue__desc{transition-delay:1s;}
+.prologue__cta{transition-delay:1.15s;}
+.prologue__tagline.is-visible,.prologue__desc.is-visible,.prologue__cta.is-visible{opacity:1;transform:none;}
+/* CTA 按钮 */
+.prologue__cta{
+  margin-top:1.2rem;display:inline-flex;align-items:center;gap:.65rem;cursor:pointer;
+  font-family:var(--serif);font-size:1rem;letter-spacing:.16em;color:#f3e7cc;
+  padding:.78rem 1.6rem;border:1px solid var(--gold);border-radius:2px;
+  background:rgba(201,168,106,.04);
+  transition:background .4s,border-color .4s,color .4s,box-shadow .4s,opacity .85s,transform .85s cubic-bezier(.16,1,.3,1);
+}
+.prologue__cta:hover{background:var(--gold);color:#15110b;border-color:var(--gold);
+  box-shadow:0 10px 34px rgba(201,168,106,.35);}
+.cta__arrow{font-size:1.05rem;animation:bob 1.6s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+/* 底部滚动提示 */
+.prologue__scrollcue{position:absolute;left:7vw;bottom:3vh;z-index:4;
+  display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;
+  color:var(--gold);font-size:.68rem;letter-spacing:.32em;opacity:.6;}
+.prologue__scrollcue span{width:1px;height:44px;background:linear-gradient(var(--gold),transparent);
   animation:cueLine 1.8s ease-in-out infinite;}
 @keyframes cueLine{0%,100%{transform:scaleY(.4);opacity:.4;}50%{transform:scaleY(1);opacity:1;}}
+@media (max-width:640px){
+  .prologue__intro-inner{padding:0 1.5rem;gap:1rem;}
+  .prologue__scrollcue{left:1.5rem;}
+  .prologue__title{font-size:clamp(2.6rem,14vw,4.5rem);}
+}
 
 .act{position:relative;min-height:68vh;display:flex;align-items:flex-end;overflow:hidden;}
 .act__frame{position:absolute;inset:0;background:#0c0a07;}
@@ -859,8 +871,8 @@ body:hover .cursor{opacity:.9;}
 
 @media (max-width:880px){.act__cap{padding-bottom:14vh;}}
 .reduce-motion .act__frame--scroll{animation:none!important;}
-.reduce-motion .prologue__cue span{animation:none!important;}
+.reduce-motion .prologue__scrollcue span{animation:none!important;}
+.reduce-motion .prologue__cta .cta__arrow{animation:none!important;}
 .reduce-motion .prologue__title .ml__i{transform:none!important;}
 .reduce-motion .act__frame{clip-path:none!important;}
 .reduce-motion .prologue__hero{opacity:1!important;transform:none!important;}
-.reduce-motion .prologue__wash,.reduce-motion .prologue__flash{display:none!important;}
