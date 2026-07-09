@@ -11,8 +11,76 @@
 </head>
 <body>
 
+  <!-- ========== 开场（真实藏品 · k95 风）========== -->
+  <section class="prologue" id="prologue">
+    <div class="prologue__intro">
+      <div class="prologue__kicker reveal">古籍探宝 · 续</div>
+      <h1 class="prologue__title reveal" style="--i:1">千年笔墨<br>皆成选择</h1>
+      <p class="prologue__sub reveal" style="--i:2">三件真实藏品，引出三段命运。向下滚动，入画。</p>
+      <div class="prologue__cue reveal" style="--i:3" aria-hidden="true"><span></span>向下</div>
+    </div>
+
+    <article class="act reveal">
+      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/qianli.jpg')"></div>
+      <div class="act__shade"></div>
+      <div class="act__cap">
+        <div class="act__no">壹</div>
+        <h2 class="act__name">千里江山图</h2>
+        <div class="act__meta">王希孟 · 北宋政和三年（1113）· 绢本青绿设色 · 故宫博物院藏</div>
+        <p class="act__line">十八岁少年，以一卷十二丈青绿，惊动千古。</p>
+        <div class="act__src">图源：Wikimedia Commons（公有领域）</div>
+      </div>
+    </article>
+
+    <article class="act reveal">
+      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/lanting.jpg')"></div>
+      <div class="act__shade"></div>
+      <div class="act__cap">
+        <div class="act__no">贰</div>
+        <h2 class="act__name">兰亭序</h2>
+        <div class="act__meta">王羲之 · 东晋永和九年（353）· 冯承素摹本 · 故宫博物院藏</div>
+        <p class="act__line">暮春之初，曲水流觞，天下第一行书就此写就。</p>
+        <div class="act__src">图源：Wikimedia Commons（公有领域）</div>
+      </div>
+    </article>
+
+    <article class="act act--yan reveal" id="act-yan">
+      <div class="act__frame act__frame--yan" id="yan-frame">
+        <div class="act__yantext" id="yan-text">
+          <div class="act__yan-name">顏真卿</div>
+          <div class="act__yan-line">維乾元元年，歲次戊戌……<br>父陷子死，巢傾卵覆。</div>
+        </div>
+      </div>
+      <div class="act__shade"></div>
+      <div class="act__cap">
+        <div class="act__no">叁</div>
+        <h2 class="act__name">祭侄文稿</h2>
+        <div class="act__meta">颜真卿 · 唐乾元元年（758）· 行书草稿 · 台北故宫博物院藏</div>
+        <p class="act__line">蘸血带泪的一纸草稿，被誉「天下第二行书」。</p>
+        <div class="act__src">原作由藏馆限制授权；可将图片命名为 jizhi.jpg 放入 assets/images/ 自动替换</div>
+      </div>
+    </article>
+
+    <div class="prologue__enter reveal">
+      <button id="enter-site" class="btn btn--solid">进入 · 千载一瞬</button>
+      <div class="prologue__enter-hint">或继续向下滚动</div>
+    </div>
+  </section>
+
+  <!-- 背景音乐开关（固定，随时可点） -->
+  <button id="sound-toggle" class="sound-toggle" aria-label="背景音乐开关" aria-pressed="true" title="背景音乐">
+    <svg class="sound-toggle__ico" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+      <path class="sound-toggle__wave" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.8 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <line class="sound-toggle__slash" x1="3" y1="3" x2="21" y2="21"/>
+    </svg>
+  </button>
+
+  <!-- 背景音乐（文件由用户放置：assets/audio/bgm.mp3） -->
+  <audio id="bgm" loop preload="auto" src="assets/audio/bgm.mp3"></audio>
+
   <!-- 顶栏 -->
-  <header class="topbar">
+  <header class="topbar topbar--hidden">
     <div class="brand" id="topbar-brand">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></div>
     <nav class="topnav">
       <a href="#" id="nav-home">人物长廊</a>

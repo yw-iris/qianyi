@@ -421,6 +421,85 @@
     if (window.Motion) Motion.refresh();
   }
 
+  /* ---------- 背景音乐 ---------- */
+  function initSound() {
+    const btn = document.getElementById('sound-toggle');
+    const audio = document.getElementById('bgm');
+    if (!btn || !audio) return;
+    const FADE = 1100;
+    let enabled = true;
+
+    function fade(to, done) {
+      const start = audio.volume || 0;
+      const t0 = performance.now();
+      (function step(t) {
+        const k = Math.min(1, (t - t0) / FADE);
+        audio.volume = start + (to - start) * k;
+        if (k < 1) requestAnimationFrame(step);
+        else if (done) done();
+      })(t0);
+    }
+    function play() { const p = audio.play(); if (p && p.catch) p.catch(() => {}); }
+    function pause() { fade(0, () => audio.pause()); }
+
+    btn.addEventListener('click', () => {
+      enabled = !enabled;
+      btn.classList.toggle('is-muted', !enabled);
+      btn.setAttribute('aria-pressed', String(enabled));
+      if (enabled) { audio.volume = 0; play(); fade(0.5); }
+      else pause();
+    });
+
+    // 浏览器自动播放策略：首次用户手势后再播放
+    function autoStart(e) {
+      if (e && e.target && e.target.closest && e.target.closest('#sound-toggle')) return;
+      if (enabled && audio.paused) { audio.volume = 0; play(); fade(0.5); }
+      window.removeEventListener('pointerdown', autoStart);
+      window.removeEventListener('keydown', autoStart);
+      window.removeEventListener('scroll', autoStart);
+    }
+    window.addEventListener('pointerdown', autoStart);
+    window.addEventListener('keydown', autoStart);
+    window.addEventListener('scroll', autoStart);
+  }
+
+  /* ---------- 开场：顶栏显隐 / 进入 / 颜真卿图替换 ---------- */
+  function initPrologue() {
+    const topbar = document.querySelector('.topbar');
+    const prologue = document.getElementById('prologue');
+    const enterBtn = document.getElementById('enter-site');
+    const hub = document.getElementById('hub-section');
+
+    if (prologue && topbar) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) topbar.classList.add('topbar--hidden');
+          else topbar.classList.remove('topbar--hidden');
+        });
+      }, { threshold: 0.02 });
+      io.observe(prologue);
+    }
+    if (enterBtn && hub) {
+      enterBtn.addEventListener('click', () => {
+        if (topbar) topbar.classList.remove('topbar--hidden');
+        hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    // 若用户提供 assets/images/jizhi.jpg，则把"题版"切换为手卷平移
+    const yanFrame = document.getElementById('yan-frame');
+    if (yanFrame) {
+      const test = new Image();
+      test.onload = () => {
+        yanFrame.style.backgroundImage = "url('assets/images/jizhi.jpg')";
+        yanFrame.classList.add('act__frame--scroll');
+        yanFrame.classList.remove('act__frame--yan');
+        const txt = document.getElementById('yan-text');
+        if (txt) txt.style.display = 'none';
+      };
+      test.src = 'assets/images/jizhi.jpg';
+    }
+  }
+
   /* ---------- 初始化 ---------- */
   function init() {
     // 向 Router 注册回调
@@ -431,6 +510,10 @@
 
     // 根据 URL hash 自动恢复或渲染 Hub 长廊
     Router.initFromHash();
+
+    // 开场与背景音乐
+    initPrologue();
+    initSound();
 
     // Hub 内事件（"开始探索"仅为指示，点击/回车滚动至人物长廊）
     const scrollToGrid = () => {

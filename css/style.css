@@ -507,3 +507,84 @@ body:hover .cursor{opacity:.9;}
 .reduce-motion .stage-cover{display:none!important;}
 .reduce-motion .cursor{display:none!important;}
 .reduce-motion .marquee__track{animation:none!important;}
+
+/* ============================================================
+ *  开场（真实藏品 · k95 风）
+ * ============================================================ */
+.prologue{position:relative;background:#0c0a07;color:var(--text-ink);}
+.prologue__intro{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:1.1rem;padding:2rem;
+  background:radial-gradient(120% 90% at 50% 18%,#241c12 0%,#120d08 60%,#0a0705 100%);
+}
+.prologue__kicker{font-family:var(--serif-en);letter-spacing:.42em;font-size:.72rem;
+  text-transform:uppercase;color:var(--gold);opacity:.85;}
+.prologue__title{
+  font-family:var(--serif);font-weight:900;line-height:1.12;margin:0;
+  font-size:clamp(2.4rem,7vw,5rem);letter-spacing:.06em;
+  background:linear-gradient(180deg,#f3e7cc,#c9a86a 70%,#a8422e);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 2px 40px rgba(201,168,106,.18);
+}
+.prologue__sub{max-width:30rem;color:var(--muted);font-size:1.02rem;line-height:1.8;margin:0;}
+.prologue__cue{margin-top:1.6rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:var(--gold);font-size:.74rem;letter-spacing:.3em;}
+.prologue__cue span{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);
+  animation:cueLine 1.8s ease-in-out infinite;}
+@keyframes cueLine{0%,100%{transform:scaleY(.4);opacity:.4;}50%{transform:scaleY(1);opacity:1;}}
+
+.act{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;}
+.act__frame{position:absolute;inset:0;background:#0c0a07;}
+.act__frame--scroll{
+  background-repeat:no-repeat;background-size:auto 100%;background-position:0% 50%;
+  animation:scrollPan 46s linear infinite alternate;
+}
+@keyframes scrollPan{from{background-position:0% 50%;}to{background-position:100% 50%;}}
+.act__shade{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,6,4,.5) 0%,rgba(8,6,4,0) 30%,rgba(8,6,4,.8) 100%);}
+.act__cap{position:relative;z-index:2;max-width:760px;padding:0 1.8rem 12vh;
+  text-shadow:0 2px 18px rgba(0,0,0,.6);}
+.act__no{font-family:var(--serif-en);font-size:.76rem;letter-spacing:.45em;color:var(--gold);
+  border:1px solid var(--line-strong);display:inline-block;padding:.25rem .7rem;border-radius:2px;margin-bottom:1rem;}
+.act__name{font-family:var(--serif);font-size:clamp(2rem,5vw,3.2rem);font-weight:900;margin:0 0 .5rem;
+  letter-spacing:.08em;color:#f3e7cc;}
+.act__meta{color:#cdbf9c;font-size:.92rem;letter-spacing:.04em;margin-bottom:.7rem;}
+.act__line{color:var(--text-ink);font-size:1.05rem;line-height:1.8;margin:0 0 .6rem;font-style:italic;}
+.act__src{color:var(--muted);font-size:.76rem;letter-spacing:.04em;font-style:normal;}
+
+/* 颜真卿题版（无图时）/ 有图时由 JS 切换为手卷 */
+.act__frame--yan{display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(120% 100% at 50% 40%,#2a2118,#0c0a07 70%);}
+.act__yantext{text-align:center;padding:2rem;}
+.act__yan-name{font-family:var(--serif);font-weight:900;color:#e9ddc6;letter-spacing:.2em;
+  font-size:clamp(3rem,9vw,6rem);text-shadow:0 4px 30px rgba(168,66,46,.3);}
+.act__yan-line{font-family:var(--serif);font-size:clamp(1rem,2.4vw,1.5rem);color:#cdbf9c;
+  margin-top:1.2rem;line-height:2;letter-spacing:.08em;}
+
+.prologue__enter{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1rem;padding:2rem;text-align:center;
+  background:radial-gradient(120% 90% at 50% 80%,#241c12,#0c0a07 70%);}
+.prologue__enter-hint{color:var(--muted);font-size:.82rem;letter-spacing:.2em;}
+
+/* 顶栏：进入开场前隐藏，滚动越过开场后显示 */
+.topbar{transition:opacity .5s,transform .5s;}
+.topbar--hidden{opacity:0;transform:translateY(-100%);pointer-events:none;}
+
+/* 背景音乐开关（固定浮钮） */
+.sound-toggle{
+  position:fixed;right:1.2rem;bottom:1.2rem;z-index:45;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line-strong);
+  background:rgba(21,17,12,.78);backdrop-filter:blur(6px);color:var(--gold);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.45);transition:transform .2s,color .2s,background .2s;
+}
+.sound-toggle:hover{transform:translateY(-2px);color:#f3e7cc;}
+.sound-toggle__ico{width:22px;height:22px;}
+.sound-toggle__slash{stroke:currentColor;stroke-width:1.8;display:none;}
+.sound-toggle.is-muted .sound-toggle__wave{display:none;}
+.sound-toggle.is-muted .sound-toggle__slash{display:block;}
+.sound-toggle.is-muted{color:var(--muted);}
+
+@media (max-width:880px){.act__cap{padding-bottom:14vh;}}
+.reduce-motion .act__frame--scroll{animation:none!important;}
+.reduce-motion .prologue__cue span{animation:none!important;}
