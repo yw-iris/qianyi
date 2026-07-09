@@ -6,7 +6,7 @@
   <title>千载一瞬 · 古人互动传记</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -60,6 +60,37 @@
         <div class="act__src">原作由藏馆限制授权；可将图片命名为 jizhi.jpg 放入 assets/images/ 自动替换</div>
       </div>
     </article>
+
+    <!-- 藏品图鉴（滚动画卷后的静态归位展示） -->
+    <div class="prologue-gallery reveal">
+      <div class="prologue-gallery__label">三件真迹 · 千载流传</div>
+      <div class="prologue-gallery__grid">
+        <div class="pg-card">
+          <div class="pg-card__frame" style="background-image:url('assets/images/qianli.jpg')"></div>
+          <div class="pg-card__info">
+            <span class="pg-card__no">壹</span>
+            <h3 class="pg-card__name">千里江山图</h3>
+            <p class="pg-card__meta">王希孟 · 北宋政和三年</p>
+          </div>
+        </div>
+        <div class="pg-card">
+          <div class="pg-card__frame" style="background-image:url('assets/images/lanting.jpg')"></div>
+          <div class="pg-card__info">
+            <span class="pg-card__no">贰</span>
+            <h3 class="pg-card__name">兰亭序</h3>
+            <p class="pg-card__meta">王羲之 · 东晋永和九年</p>
+          </div>
+        </div>
+        <div class="pg-card">
+          <div class="pg-card__frame pg-card__frame--yan" style="background-image:url('assets/images/jizhi.jpg')"></div>
+          <div class="pg-card__info">
+            <span class="pg-card__no">叁</span>
+            <h3 class="pg-card__name">祭侄文稿</h3>
+            <p class="pg-card__meta">颜真卿 · 唐乾元元年</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="prologue__enter reveal">
       <span class="prologue__enter-hint">继续向下，入画 · 千载一瞬</span>

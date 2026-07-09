@@ -462,11 +462,12 @@
     let enabled = true;
 
     function fade(to, done) {
-      const start = audio.volume || 0;
+      const start = Math.max(0, Math.min(1, audio.volume || 0));
+      const target = Math.max(0, Math.min(1, to));
       const t0 = performance.now();
       (function step(t) {
         const k = Math.min(1, (t - t0) / FADE);
-        audio.volume = start + (to - start) * k;
+        audio.volume = Math.max(0, Math.min(1, start + (target - start) * k));
         if (k < 1) requestAnimationFrame(step);
         else if (done) done();
       })(t0);
