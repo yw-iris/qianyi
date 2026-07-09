@@ -108,34 +108,39 @@
     }
 
     _paintDustPattern(ctx, W, H) {
+      // 灰色尘覆盖层：未拂尘区域呈灰色（降低饱和度），拂尘后恢复原色
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(150,138,112,0.32)';
+      // 半透明灰色底 —— 模拟灰白尘土覆盖
+      ctx.fillStyle = 'rgba(180,175,168,0.55)';
       ctx.fillRect(0, 0, W, H);
-      const blobs = 260;
+      // 尘斑：不规则灰白色块，模拟不均匀积尘
+      const blobs = 200;
       for (let i = 0; i < blobs; i++) {
         const x = Math.random() * W, y = Math.random() * H;
-        const r = 6 + Math.random() * 60;
-        const a = 0.05 + Math.random() * 0.22;
+        const r = 8 + Math.random() * 55;
+        const a = 0.08 + Math.random() * 0.28;
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        const tone = Math.random() < 0.5 ? '120,108,84' : '96,90,78';
+        const tone = Math.random() < 0.5 ? '170,165,155' : '155,150,140';
         g.addColorStop(0, `rgba(${tone},${a})`);
         g.addColorStop(1, `rgba(${tone},0)`);
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
       }
+      // 细纹划痕
       ctx.lineWidth = 1;
-      for (let i = 0; i < 140; i++) {
+      for (let i = 0; i < 100; i++) {
         const x = Math.random() * W, y = Math.random() * H;
-        const len = 10 + Math.random() * 70;
-        const ang = (Math.random() - 0.5) * 0.6;
-        ctx.strokeStyle = `rgba(70,62,50,${0.06 + Math.random() * 0.12})`;
+        const len = 8 + Math.random() * 50;
+        const ang = (Math.random() - 0.5) * 0.5;
+        ctx.strokeStyle = `rgba(120,115,108,${0.05 + Math.random() * 0.10})`;
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x + Math.cos(ang) * len, y + Math.sin(ang) * len);
         ctx.stroke();
       }
-      for (let i = 0; i < 2200; i++) {
-        ctx.fillStyle = `rgba(60,52,40,${0.04 + Math.random() * 0.10})`;
+      // 细密噪点
+      for (let i = 0; i < 1500; i++) {
+        ctx.fillStyle = `rgba(130,125,118,${0.04 + Math.random() * 0.08})`;
         ctx.fillRect(Math.random() * W, Math.random() * H, 1.2, 1.2);
       }
     }
@@ -220,7 +225,7 @@
       this.group.add(this.paintingMesh);
 
       const dustMat = new THREE.MeshBasicMaterial({
-        map: this.dustTex, transparent: true, opacity: 1, depthWrite: false
+        map: this.dustTex, transparent: true, opacity: 0.92, depthWrite: false
       });
       this.dustMesh = new THREE.Mesh(geo.clone(), dustMat);
       this.dustMesh.position.z = 0.02;

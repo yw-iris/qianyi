@@ -585,13 +585,24 @@
       else pause();
     });
 
-    // 浏览器自动播放策略：首次用户手势后再播放
+    // 进入网页立即播放背景音乐（浏览器需用户手势，页面加载后自动尝试）
+    function tryAutoPlay() {
+      if (!enabled || !audio.paused) return;
+      audio.volume = 0;
+      play();
+      fade(0.5);
+    }
+    // DOM 加载完毕后立即尝试（某些浏览器允许）
+    tryAutoPlay();
+    // 如被浏览器阻止，在首次用户手势时重试
     function autoStart(e) {
       if (e && e.target && e.target.closest && e.target.closest('#sound-toggle')) return;
       if (enabled && audio.paused) { audio.volume = 0; play(); fade(0.5); }
-      window.removeEventListener('pointerdown', autoStart);
-      window.removeEventListener('keydown', autoStart);
-      window.removeEventListener('scroll', autoStart);
+      if (!audio.paused) {
+        window.removeEventListener('pointerdown', autoStart);
+        window.removeEventListener('keydown', autoStart);
+        window.removeEventListener('scroll', autoStart);
+      }
     }
     window.addEventListener('pointerdown', autoStart);
     window.addEventListener('keydown', autoStart);
