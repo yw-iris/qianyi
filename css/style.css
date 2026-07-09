@@ -646,6 +646,7 @@ body:hover .cursor{opacity:.9;}
   overflow:hidden;white-space:nowrap;
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   padding:1rem 0;background:rgba(0,0,0,.18);
+  margin-top:6vh;
 }
 .marquee__track{
   display:inline-flex;align-items:center;gap:3.5rem;
