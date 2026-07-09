@@ -627,12 +627,24 @@ body:hover .cursor{opacity:.9;}
   content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);
   width:40px;height:1px;background:var(--gold);opacity:.4;}
 .prologue__title{
-  font-family:var(--calligraphy);font-weight:400;line-height:1.2;margin:0;
+  font-family:var(--calligraphy);font-weight:400;line-height:1.15;margin:0;
   font-size:clamp(3rem,8vw,6.5rem);letter-spacing:.12em;
-  background:linear-gradient(180deg,#f3e7cc,#c9a86a 70%,#a8422e);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  display:flex;flex-direction:column;align-items:center;
   text-shadow:0 2px 40px rgba(201,168,106,.18);
 }
+/* 遮罩逐行揭示（k95 编辑式开场）*/
+.prologue__title.reveal{opacity:1;transform:none;}  /* 容器保持可见，位移由内部 ml__i 完成 */
+.prologue__title .ml{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em;}
+.prologue__title .ml__i{
+  display:block;transform:translateY(115%);
+  background:linear-gradient(180deg,#f3e7cc,#c9a86a 70%,#a8422e);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  transition:transform 1.05s cubic-bezier(.16,1,.3,1);
+  will-change:transform;
+}
+.prologue__title.is-visible .ml__i{transform:translateY(0);}
+.prologue__title .ml:nth-child(1) .ml__i{transition-delay:.12s;}
+.prologue__title .ml:nth-child(2) .ml__i{transition-delay:.30s;}
 .prologue__sub{max-width:30rem;color:var(--muted);font-size:1.02rem;line-height:1.8;margin:0;}
 .prologue__cue{margin-top:1.6rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
   color:var(--gold);font-size:.74rem;letter-spacing:.3em;}
@@ -658,6 +670,10 @@ body:hover .cursor{opacity:.9;}
 .act__meta{color:#cdbf9c;font-size:.92rem;letter-spacing:.04em;margin-bottom:.7rem;}
 .act__line{color:var(--text-ink);font-size:1.05rem;line-height:1.8;margin:0 0 .6rem;font-style:italic;}
 .act__src{color:var(--muted);font-size:.76rem;letter-spacing:.04em;font-style:normal;}
+
+/* 真迹图框 clip-path 擦入（k95 式编辑揭示）*/
+.act__frame{clip-path:inset(0 0 100% 0);transition:clip-path 1.15s cubic-bezier(.16,1,.3,1);}
+.act.is-visible .act__frame{clip-path:inset(0 0 0% 0);}
 
 /* 颜真卿题版（无图时）/ 有图时由 JS 切换为手卷 */
 .act__frame--yan{display:flex;align-items:center;justify-content:center;
@@ -735,3 +751,5 @@ body:hover .cursor{opacity:.9;}
 @media (max-width:880px){.act__cap{padding-bottom:14vh;}}
 .reduce-motion .act__frame--scroll{animation:none!important;}
 .reduce-motion .prologue__cue span{animation:none!important;}
+.reduce-motion .prologue__title .ml__i{transform:none!important;}
+.reduce-motion .act__frame{clip-path:none!important;}
