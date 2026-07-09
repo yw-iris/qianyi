@@ -80,6 +80,9 @@
     onScroll();
     refresh();
 
+    // 开场一次性动画：触发全幅真迹缓推 + 墨色晕染拭去（k95 式开场）
+    requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('is-loaded')));
+
     // 自动构建走马灯（若存在容器）
     const mt = document.getElementById('marquee-track');
     if (mt) buildMarquee(HISTORY_QUOTES, mt);
