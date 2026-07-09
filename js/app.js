@@ -37,7 +37,6 @@
   const el = {
     // 导航
     topbarBrand: $('#topbar-brand'),
-    navHome: $('#nav-home'),
     navStage: $('#nav-stage'),
     navGallery: $('#nav-gallery'),
     backBtn: $('#back-to-hub'),
@@ -50,6 +49,7 @@
     // 叙事
     chapter: $('#node-chapter'),
     text: $('#node-text'),
+    stageAxis: $('#stage-axis'),
     choices: $('#node-choices'),
     progressCount: $('#progress-count'),
     progressBar: $('#progress-bar'),
@@ -98,7 +98,6 @@
     el.stageSection.style.display = '';
     el.gallerySection.style.display = '';
     el.booksPanel.style.display = '';
-    el.navHome.style.display = '';
     el.navStage.style.display = '';
     el.navGallery.style.display = '';
 
@@ -172,7 +171,37 @@
       el.choices.appendChild(b);
     });
     el.choices.classList.remove('is-ending');
+    renderStageAxis();
     $('#stage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ---------- 抉择之台：实时回溯轴线 ---------- */
+  function renderStageAxis() {
+    if (!el.stageAxis || !currentChar) { el.stageAxis.innerHTML = ''; return; }
+    const path = state.path;
+    if (path.length < 1) { el.stageAxis.innerHTML = ''; return; }
+
+    const nodes = path.map((nid, k) => {
+      const n = currentChar.story[nid];
+      if (!n) return '';
+      // 找出从该节点走向下一个节点的选项文本
+      const nextId = (k + 1 < path.length) ? path[k + 1] : state.node;
+      const ch = (n.choices && nextId) ? n.choices.find(c => c.next === nextId) : null;
+      return `<button type="button" class="axis__node" data-node="${nid}" title="回溯至此处重选">` +
+               `<span class="axis__dot"></span>` +
+               `<span class="axis__ch">${n.chapter || '抉择'}</span>` +
+               `<span class="axis__choice">${ch ? ch.text : ''}</span>` +
+             `</button><span class="axis__line"></span>`;
+    }).join('');
+
+    el.stageAxis.innerHTML =
+      `<div class="stage-axis__label">已做抉择 · 点击可回溯</div>` +
+      `<div class="axis__track">${nodes}</div>`;
+
+    // 绑定点击回溯
+    el.stageAxis.querySelectorAll('.axis__node[data-node]').forEach((b) => {
+      b.addEventListener('click', () => renderNode(b.dataset.node));
+    });
   }
 
   /* ---------- 到达结局 ---------- */
@@ -184,6 +213,9 @@
     state.unlocked.add(e.id);
     saveUnlocked();
     if (viewer && meta) viewer.clearRegion(meta.region, !isNew);
+
+    // 清空抉择之台轴线（结局弹窗自带轴线）
+    if (el.stageAxis) el.stageAxis.innerHTML = '';
 
     updateProgress();
     renderGallery();
@@ -484,6 +516,9 @@
         if (topbar) topbar.classList.remove('topbar--hidden');
         hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
+    } else if (hub) {
+      // 无按钮时：prologue 滚出视口后自动显示顶栏（IntersectionObserver 已处理）
+      // 用户自然滚动到 hub 即可
     }
     // 若用户提供 assets/images/jizhi.jpg，则把"题版"切换为手卷平移
     const yanFrame = document.getElementById('yan-frame');
@@ -527,8 +562,9 @@
     // 返回长廊按钮
     el.backBtn.addEventListener('click', () => Router.goHome());
 
-    // 导航栏
-    el.navHome.addEventListener('click', (ev) => { ev.preventDefault(); Router.goHome(); });
+    // 导航栏：品牌点击返回主页
+    el.topbarBrand.addEventListener('click', (ev) => { ev.preventDefault(); Router.goHome(); });
+    el.topbarBrand.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); Router.goHome(); } });
 
     // 重置进度
     el.resetBtn.addEventListener('click', () => {

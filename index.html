@@ -62,8 +62,7 @@
     </article>
 
     <div class="prologue__enter reveal">
-      <button id="enter-site" class="btn btn--solid">进入 · 千载一瞬</button>
-      <div class="prologue__enter-hint">或继续向下滚动</div>
+      <span class="prologue__enter-hint">继续向下，入画 · 千载一瞬</span>
     </div>
   </section>
 
@@ -81,10 +80,9 @@
 
   <!-- 顶栏 -->
   <header class="topbar topbar--hidden">
-    <div class="brand" id="topbar-brand">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></div>
+    <div class="brand" id="topbar-brand" role="button" tabindex="0">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></div>
     <nav class="topnav">
-      <a href="#" id="nav-home">人物长廊</a>
-      <a href="#stage" id="nav-stage" style="display:none;">抉择之台</a>
+      <a href="#" id="nav-stage" style="display:none;">抉择之台</a>
       <a href="#gallery" id="nav-gallery" style="display:none;">结局图鉴</a>
     </nav>
   </header>
@@ -128,6 +126,7 @@
       <div class="panel story">
         <div id="node-chapter" class="node-chapter"></div>
         <div id="node-text" class="node-text"></div>
+        <div id="stage-axis" class="stage-axis"></div>
         <div id="node-choices" class="node-choices"></div>
         <div class="story__foot">提示：可按 <kbd>1</kbd> / <kbd>2</kbd> 快速抉择，<kbd>Esc</kbd> 关闭弹窗</div>
       </div>
@@ -193,8 +192,17 @@
 
   <!-- 全部解锁提示 -->
   <div id="complete-toast" class="toast">
+    <span class="toast__corner-l" aria-hidden="true"></span>
+    <span class="toast__corner-r" aria-hidden="true"></span>
     <div class="toast__title"></div>
     <div class="toast__sub"></div>
+  </div>
+
+  <!-- 三维画卷放大弹窗（双击触发） -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-label="画作放大查看">
+    <button id="lb-close" class="lightbox__close" aria-label="关闭放大">×</button>
+    <img id="lb-img" class="lightbox__img" alt="千里江山图 · 放大鉴赏" draggable="false" />
+    <div class="lightbox__caption" id="lb-caption">千里江山图</div>
   </div>
 
   <!-- 依赖与脚本：router 先加载以便管理角色模块；motion 在 app 前初始化 -->

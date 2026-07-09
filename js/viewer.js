@@ -68,7 +68,9 @@
       this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
       this.controls.dampingFactor = 0.08;
-      this.controls.enablePan = false;
+      this.controls.enablePan = true;          // 允许拖拽平移观赏画卷
+      this.controls.screenSpacePanning = false; // 世界坐标平移，更自然
+      this.controls.panSpeed = 0.8;
       this.controls.minDistance = 5;
       this.controls.maxDistance = 24;
       this.controls.minPolarAngle = Math.PI * 0.28;
@@ -76,8 +78,9 @@
       this.controls.autoRotateSpeed = 0.9;
       this.controls.target.set(0, 0, 0);
 
-      // 双击放大 / 还原（桌面端）
-      this.renderer.domElement.addEventListener('dblclick', () => this._toggleZoom());
+      // 双击放大：打开居中弹窗展示画作全貌
+      this._currentImageSrc = '';
+      this.renderer.domElement.addEventListener('dblclick', () => this._openLightbox());
 
       this.scene.add(new THREE.AmbientLight(0xffffff, 0.9));
       const dir = new THREE.DirectionalLight(0xfff2dc, 0.7);
@@ -159,6 +162,7 @@
     }
 
     setPainting(src, instant) {
+      this._currentImageSrc = src; // 保存当前画作源供 lightbox 使用
       if (this.mode === '2d') { this._setFallbackImage(src); return; }
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
@@ -284,7 +288,32 @@
       this.renderer.setSize(w, h, false);
     }
 
-    /* ---------- 双击放大 / 还原 ---------- */
+    /* ---------- 双击放大：居中弹窗展示画卷全貌 ---------- */
+    _openLightbox() {
+      const lb = document.getElementById('lightbox');
+      if (!lb) return;
+      const img = lb.querySelector('#lb-img');
+      if (!img) return;
+      // 优先使用当前加载的画作源；3D 模式下取纹理 URL，2D 取 fallback src
+      let src = this._currentImageSrc || this.defaultSrc;
+      if (this.mode === '2d' && this.fallbackImg) {
+        src = this.fallbackImg.src || src;
+      }
+      img.src = src;
+      const cap = lb.querySelector('#lb-caption');
+      if (cap) cap.textContent = '千里江山图 · 细观';
+      lb.classList.add('is-show');
+      // 点击背景/关闭按钮/图片均可关闭
+      const close = () => lb.classList.remove('is-show');
+      lb.querySelector('#lb-close').onclick = close;
+      img.onclick = close;
+      lb.onclick = (e) => { if (e.target === lb) close(); };
+      // ESC 关闭
+      const onEsc = (ev) => { if (ev.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); } };
+      document.addEventListener('keydown', onEsc);
+    }
+
+    /* ---------- （保留）相机距离缩放（供其他场景使用）---------- */
     _toggleZoom() {
       if (this.mode !== '3d') return;
       this.controls.autoRotate = false;   // 手动观察时停止自动旋转
@@ -303,7 +332,7 @@
       img.className = 'fallback-img';
       img.alt = '千里江山图';
       this.fallbackImg = img;
-      img.addEventListener('dblclick', () => img.classList.toggle('is-zoomed'));
+      img.addEventListener('dblclick', () => this._openLightbox());
       wrap.appendChild(img);
 
       const overlay = document.createElement('div');
