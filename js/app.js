@@ -601,6 +601,18 @@
       // 无按钮时：prologue 滚出视口后自动显示顶栏（IntersectionObserver 已处理）
       // 用户自然滚动到 hub 即可
     }
+    // 若 jizhi.jpg 加载失败，祭侄文稿 act 卡片回退为题版模式
+    const yanFrame = document.getElementById('yan-frame');
+    if (yanFrame) {
+      const test = new Image();
+      test.onerror = () => {
+        yanFrame.style.backgroundImage = '';
+        yanFrame.classList.remove('act__frame--scroll');
+        yanFrame.classList.add('act__frame--yan');
+        yanFrame.innerHTML = '<div class="act__yantext"><div class="act__yan-name">顏真卿</div><div class="act__yan-line">維乾元元年，歲次戊戌……<br>父陷子死，巢傾卵覆。</div></div>';
+      };
+      test.src = 'assets/images/jizhi.jpg';
+    }
   }
 
   /* ---------- 初始化 ---------- */
