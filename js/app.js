@@ -82,6 +82,14 @@
     return text.split('\n\n').map((t) => `<p>${t.replace(/\n/g, '<br>')}</p>`).join('');
   }
 
+  /* 秒 → mm:ss */
+  function fmtDuration(sec) {
+    sec = Number(sec) || 0;
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
   /* ========== 进入角色（由 Router 调用）========== */
 
   function enterStage(charData) {
@@ -416,8 +424,36 @@
   /* ========== 书籍推荐面板（新增）========== */
 
   function renderBooks(highlight) {
+    const videoBlock = document.getElementById('video-block');
+    // 影像志：文人传记副本的配套传记视频（B 站）
+    if (currentChar && currentChar.meta && currentChar.meta.video && videoBlock) {
+      const v = currentChar.meta.video;
+      videoBlock.style.display = '';
+      videoBlock.innerHTML =
+        `<div class="vblock__head">` +
+          `<span class="vblock__badge">影像志</span>` +
+          `<div class="vblock__meta">` +
+            `<h3 class="vblock__title">${v.title}</h3>` +
+            `<div class="vblock__sub">${v.uploader} · 「${v.groupTitle || '传记影像'}」 · 时长 ${fmtDuration(v.duration)}</div>` +
+          `</div>` +
+        `</div>` +
+        `<div class="vblock__frame">` +
+          `<iframe src="//player.bilibili.com/player.html?bvid=${v.bvid}&page=1&high_quality=1&danmaku=0" ` +
+            `scrolling="no" border="0" frameborder="no" framespacing="0" ` +
+            `allowfullscreen="true" loading="lazy" ` +
+            `referrerpolicy="no-referrer-when-downgrade"` +
+            `title="${v.title}"></iframe>` +
+        `</div>` +
+        `<p class="vblock__note">影像为第三方传记资料（${v.uploader} 制作），仅供延伸理解，非本副本剧情。</p>`;
+    } else if (videoBlock) {
+      videoBlock.style.display = 'none';
+      videoBlock.innerHTML = '';
+    }
+
     if (!currentChar || !currentChar.books || !currentChar.books.length) {
-      el.booksPanel.style.display = 'none'; return;
+      if (!videoBlock || videoBlock.style.display === 'none') {
+        el.booksPanel.style.display = 'none'; return;
+      }
     }
     el.booksPanel.style.display = '';
     el.booksTitle.textContent = `「${currentChar.meta.title}」延伸阅读`;

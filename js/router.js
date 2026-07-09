@@ -40,6 +40,50 @@
       color: '#a8422e',
       script: 'js/characters/yanzhenqing.js',
       thumb: 'assets/images/jizhi_thumb.jpg'
+    },
+    {
+      id: 'zeduan',
+      name: '张择端',
+      en: 'ZHANG ZEDUAN',
+      era: '北宋',
+      year: '1085–?',
+      tag: '界画圣手 · 清明上河',
+      color: '#2e7d6b',
+      script: 'js/characters/zeduan.js',
+      thumb: 'https://commons.wikimedia.org/wiki/Special:FilePath/%E6%B8%85%E6%98%8E%E4%B8%8A%E6%B2%B3%E5%9B%BE.jpg?width=400'
+    },
+    {
+      id: 'liyu',
+      name: '李煜',
+      en: 'LI YU',
+      era: '南唐',
+      year: '937–978',
+      tag: '词中之帝 · 亡国之君',
+      color: '#7a4a6b',
+      script: 'js/characters/liyu.js',
+      thumb: 'https://commons.wikimedia.org/wiki/Special:FilePath/Li_Yu_scth.jpg?width=400'
+    },
+    {
+      id: 'sushi',
+      name: '苏轼',
+      en: 'SU SHI',
+      era: '北宋',
+      year: '1037–1101',
+      tag: '东坡居士 · 豪放词祖',
+      color: '#3a6b8a',
+      script: 'js/characters/sushi.js',
+      thumb: 'https://commons.wikimedia.org/wiki/Special:FilePath/Su_Shi.jpg?width=400'
+    },
+    {
+      id: 'wanganshi',
+      name: '王安石',
+      en: 'WANG ANSHI',
+      era: '北宋',
+      year: '1021–1086',
+      tag: '拗相公 · 熙宁变法',
+      color: '#a8422e',
+      script: 'js/characters/wanganshi.js',
+      thumb: 'https://commons.wikimedia.org/wiki/Special:FilePath/Wang_Anshi.jpg?width=400'
     }
     /* 后续添加新角色只需在此追加一条：
      * { id: 'xxx', name: '...', en: '...', era: '...', script: 'js/characters/xxx.js', ... }
