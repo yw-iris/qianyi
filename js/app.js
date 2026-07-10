@@ -228,7 +228,6 @@
     el.chapter.textContent = node.chapter || '';
     el.text.innerHTML = paragraphs(node.text);
     el.choices.innerHTML = '';
-    const choiceEls = [];
     node.choices.forEach((c, i) => {
       const b = document.createElement('button');
       b.className = 'choice';
@@ -240,35 +239,10 @@
         playTransition(c);
       });
       el.choices.appendChild(b);
-      choiceEls.push(b);
     });
     el.choices.classList.remove('is-ending', 'node-choices--hidden');
-    renderChoiceStats(choiceEls);
     renderStageAxis();
     $('#stage').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  /* ---------- 选项匿名统计（"X% 的人在这里选择了……"）---------- */
-  function renderChoiceStats(choiceEls) {
-    if (!window.ChoiceStats || !currentChar) return;
-    const stats = ChoiceStats.statsFor(currentChar.id, state.node, choiceEls.length);
-    choiceEls.forEach((btn, i) => {
-      const o = stats.perOption[i];
-      const isTop = i === stats.topIndex;
-      const stat = document.createElement('span');
-      stat.className = 'choice__stat' + (isTop ? ' is-top' : '');
-      stat.innerHTML =
-        `<span class="choice__bar"><span class="choice__fill" style="width:${o.pct}%"></span></span>` +
-        `<span class="choice__pct">${o.pct}%</span>` +
-        (isTop ? `<span class="choice__tag">最多人选</span>` : '');
-      btn.appendChild(stat);
-    });
-    const topLabel = choiceEls[stats.topIndex].querySelector('.choice__txt').textContent;
-    const agg = document.createElement('div');
-    agg.className = 'choices-agg';
-    agg.innerHTML = `已有 <b>${stats.total.toLocaleString('zh-CN')}</b> 人在此抉择 · ` +
-      `<span class="choices-agg__lead">${stats.perOption[stats.topIndex].pct}% 的人在这里选择了「${topLabel}」</span>`;
-    el.choices.appendChild(agg);
   }
 
   /* ---------- 选择后过渡剧情：选项消失→bridge浮现→跳过→下一节点 ---------- */
@@ -502,11 +476,26 @@
       card.className = 'ecard reveal' + (unlocked ? ' unlocked' : ' locked');
       card.style.setProperty('--tint', e.tint);
       if (unlocked) {
+        // 结局达成统计
+        let statHtml = '';
+        if (window.ChoiceStats) {
+          const ec = findEndingChoice(e.id);
+          if (ec) {
+            const s = ChoiceStats.statsFor(currentChar.id, ec.nodeId, ec.totalChoices);
+            const pct = s.perOption[ec.choiceIndex].pct;
+            statHtml =
+              `<div class="ecard__stat">` +
+                `<span class="ecard__stat-bar"><span class="ecard__stat-fill" style="width:${pct}%"></span></span>` +
+                `<span class="ecard__stat-pct">${pct}% 的人走向了这里</span>` +
+              `</div>`;
+          }
+        }
         card.innerHTML =
           `<div class="ecard__no">${String(e.region + 1).padStart(2, '0')}</div>` +
           `<div class="ecard__en">${e.en}</div>` +
           `<h3 class="ecard__title">${e.title}</h3>` +
           `<p class="ecard__blurb">${e.blurb}</p>` +
+          statHtml +
           `<span class="ecard__tag">已解锁 · 点击重温</span>`;
         card.addEventListener('click', () => {
           const nd = findEndingNode(e.id);
@@ -529,6 +518,22 @@
     for (const k in currentChar.story)
       if (currentChar.story[k].ending && currentChar.story[k].ending.id === id)
         return currentChar.story[k];
+    return null;
+  }
+
+  /** 找到通往某结局的那个选择节点与选项索引 */
+  function findEndingChoice(endingId) {
+    if (!currentChar) return null;
+    for (const k in currentChar.story) {
+      const n = currentChar.story[k];
+      if (!n.choices) continue;
+      for (let i = 0; i < n.choices.length; i++) {
+        const next = currentChar.story[n.choices[i].next];
+        if (next && next.ending && next.ending.id === endingId) {
+          return { nodeId: k, choiceIndex: i, totalChoices: n.choices.length };
+        }
+      }
+    }
     return null;
   }
 
