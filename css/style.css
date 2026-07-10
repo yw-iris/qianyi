@@ -217,6 +217,15 @@ kbd{
 .bridge-text p.is-revealed{opacity:1;transform:none;}
 @keyframes skipIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
+/* bridge 全部浮现后的点击提示 */
+.bridge-tap-hint{
+  margin-top:1.4rem;text-align:center;font-size:.84rem;
+  color:var(--gold);opacity:0;transform:translateY(8px);
+  transition:opacity .6s ease,transform .6s ease;
+  letter-spacing:.12em;
+}
+.bridge-tap-hint.is-visible{opacity:.75;transform:none;}
+
 /* 三维画卷面板 */
 .scroll__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;}
 .scroll__name{font-size:1.15rem;font-weight:600;letter-spacing:.06em;}

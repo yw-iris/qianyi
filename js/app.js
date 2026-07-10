@@ -243,47 +243,60 @@
   }
 
   /* ---------- 选择后过渡剧情：选项消失→bridge浮现→跳过→下一节点 ---------- */
-  let _bridgeTimer = null, _bridgeAutoTimer = null;
+  let _bridgeTimer = null, _bridgeAutoTimer = null, _bridgeClickHandler = null;
+  let _pendingNextId = null;
+
+  /* 全部 bridge 段落浮现后，显示"点击任意位置继续"提示，等待用户交互 */
+  function showTapHint() {
+    const hint = document.createElement('div');
+    hint.className = 'bridge-tap-hint';
+    hint.textContent = '— 点击任意位置继续 —';
+    el.text.appendChild(hint);
+    requestAnimationFrame(() => { hint.classList.add('is-visible'); });
+
+    _bridgeClickHandler = (ev) => {
+      if (ev.target.closest('#skip-bridge')) return;
+      finishTransition(_pendingNextId);
+    };
+    document.addEventListener('click', _bridgeClickHandler);
+  }
 
   function playTransition(choice) {
     const bridge = choice.bridge || '';
     const nextId = choice.next;
+    _pendingNextId = nextId;
 
     // 1) 选项按钮退出动画
     el.choices.classList.add('node-choices--hidden');
 
     // 2) 如果有 bridge 文字，播放过渡剧情
     if (bridge) {
-      // 渲染 bridge 文字（逐段淡入）
       const paras = bridge.split('\n\n');
+      const paraDelay = 550;
       const bridgeHtml = paras.map((t, i) =>
-        `<p style="transition-delay:${i * 0.4}s">${t.replace(/\n/g, '<br>')}</p>`
+        `<p style="transition-delay:${i * paraDelay / 1000}s">${t.replace(/\n/g, '<br>')}</p>`
       ).join('');
       el.text.innerHTML = `<div class="bridge-text">${bridgeHtml}</div>`;
 
-      // 逐段触发淡入
       let revealed = 0;
+      const ps = el.text.querySelectorAll('.bridge-text p');
       const revealNext = () => {
-        const ps = el.text.querySelectorAll('.bridge-text p');
         if (revealed < ps.length) {
           ps[revealed].classList.add('is-revealed');
           revealed++;
           if (revealed < ps.length) {
-            _bridgeTimer = setTimeout(revealNext, 420);
+            _bridgeTimer = setTimeout(revealNext, paraDelay);
           } else {
-            // 全部浮现后，等 1s 自动进入下一节点
-            _bridgeAutoTimer = setTimeout(() => finishTransition(nextId), 1000);
+            _bridgeAutoTimer = setTimeout(showTapHint, 600);
           }
         }
       };
-      _bridgeTimer = setTimeout(revealNext, 300);
+      _bridgeTimer = setTimeout(revealNext, 350);
 
-      // 显示跳过按钮
       el.skipBridge.style.display = '';
       el.skipBridge.classList.add('is-visible');
       el.skipBridge.onclick = () => finishTransition(nextId);
     } else {
-      // 无 bridge：短暂延迟后直接进入下一节点
       _bridgeAutoTimer = setTimeout(() => finishTransition(nextId), 600);
     }
   }
@@ -296,10 +309,18 @@
   function clearTransition() {
     if (_bridgeTimer) { clearTimeout(_bridgeTimer); _bridgeTimer = null; }
     if (_bridgeAutoTimer) { clearTimeout(_bridgeAutoTimer); _bridgeAutoTimer = null; }
+    if (_bridgeClickHandler) {
+      document.removeEventListener('click', _bridgeClickHandler);
+      _bridgeClickHandler = null;
+    }
     el.skipBridge.style.display = 'none';
     el.skipBridge.classList.remove('is-visible');
     el.skipBridge.onclick = null;
     el.choices.classList.remove('node-choices--hidden');
+    _pendingNextId = null;
+    // 清理点击提示
+    const hint = el.text.querySelector('.bridge-tap-hint');
+    if (hint) hint.remove();
   }
 
   /* ---------- 抉择之台：实时回溯轴线 ---------- */
