@@ -78,7 +78,10 @@
     booksTitle: $('#books-title'),
 
     // 返回封面（新增）
-    backToCover: $('#back-to-cover')
+    backToCover: $('#back-to-cover'),
+
+    // 过渡剧情
+    skipBridge: $('#skip-bridge')
   };
 
   /* ---------- 文案分段 ---------- */
@@ -219,6 +222,9 @@
     if (idx === -1) state.path.push(id);
     else state.path.length = idx + 1;
 
+    // 清理上一轮过渡状态
+    clearTransition();
+
     el.chapter.textContent = node.chapter || '';
     el.text.innerHTML = paragraphs(node.text);
     el.choices.innerHTML = '';
@@ -228,12 +234,72 @@
       b.innerHTML = `<span class="choice__no">${i + 1}</span>` +
         `<span class="choice__txt">${c.text}</span>` +
         `<span class="choice__arrow">→</span>`;
-      b.addEventListener('click', () => renderNode(c.next));
+      b.addEventListener('click', () => playTransition(c));
       el.choices.appendChild(b);
     });
-    el.choices.classList.remove('is-ending');
+    el.choices.classList.remove('is-ending', 'node-choices--hidden');
     renderStageAxis();
     $('#stage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ---------- 选择后过渡剧情：选项消失→bridge浮现→跳过→下一节点 ---------- */
+  let _bridgeTimer = null, _bridgeAutoTimer = null;
+
+  function playTransition(choice) {
+    const bridge = choice.bridge || '';
+    const nextId = choice.next;
+
+    // 1) 选项按钮退出动画
+    el.choices.classList.add('node-choices--hidden');
+
+    // 2) 如果有 bridge 文字，播放过渡剧情
+    if (bridge) {
+      // 渲染 bridge 文字（逐段淡入）
+      const paras = bridge.split('\n\n');
+      const bridgeHtml = paras.map((t, i) =>
+        `<p style="transition-delay:${i * 0.4}s">${t.replace(/\n/g, '<br>')}</p>`
+      ).join('');
+      el.text.innerHTML = `<div class="bridge-text">${bridgeHtml}</div>`;
+
+      // 逐段触发淡入
+      let revealed = 0;
+      const revealNext = () => {
+        const ps = el.text.querySelectorAll('.bridge-text p');
+        if (revealed < ps.length) {
+          ps[revealed].classList.add('is-revealed');
+          revealed++;
+          if (revealed < ps.length) {
+            _bridgeTimer = setTimeout(revealNext, 420);
+          } else {
+            // 全部浮现后，等 1s 自动进入下一节点
+            _bridgeAutoTimer = setTimeout(() => finishTransition(nextId), 1000);
+          }
+        }
+      };
+      _bridgeTimer = setTimeout(revealNext, 300);
+
+      // 显示跳过按钮
+      el.skipBridge.style.display = '';
+      el.skipBridge.classList.add('is-visible');
+      el.skipBridge.onclick = () => finishTransition(nextId);
+    } else {
+      // 无 bridge：短暂延迟后直接进入下一节点
+      _bridgeAutoTimer = setTimeout(() => finishTransition(nextId), 600);
+    }
+  }
+
+  function finishTransition(nextId) {
+    clearTransition();
+    renderNode(nextId);
+  }
+
+  function clearTransition() {
+    if (_bridgeTimer) { clearTimeout(_bridgeTimer); _bridgeTimer = null; }
+    if (_bridgeAutoTimer) { clearTimeout(_bridgeAutoTimer); _bridgeAutoTimer = null; }
+    el.skipBridge.style.display = 'none';
+    el.skipBridge.classList.remove('is-visible');
+    el.skipBridge.onclick = null;
+    el.choices.classList.remove('node-choices--hidden');
   }
 
   /* ---------- 抉择之台：实时回溯轴线 ---------- */
@@ -723,6 +789,8 @@
     document.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape') closeModal();
       if (el.modal.classList.contains('show')) return;
+      // 过渡剧情播放中，按键不触发选择
+      if (el.choices.classList.contains('node-choices--hidden')) return;
       if (ev.key === '1') { const c = el.choices.querySelector('.choice'); if (c) c.click(); }
       if (ev.key === '2') { const cs = el.choices.querySelectorAll('.choice'); if (cs[1]) cs[1].click(); }
     });

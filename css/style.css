@@ -191,6 +191,32 @@ kbd{
 .choice:hover .choice__arrow{transform:translateX(4px);color:var(--gold);}
 .story__foot{margin-top:1.4rem;font-size:.78rem;color:var(--muted);}
 
+/* 选项退出动画 */
+.node-choices--hidden .choice{animation:choiceOut .35s ease both;pointer-events:none;}
+.node-choices--hidden .choice:nth-child(2){animation-delay:.05s;}
+@keyframes choiceOut{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(-8px);}}
+
+/* 过渡剧情跳过按钮 */
+.skip-bridge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:none;border:1px solid var(--line-strong);border-radius:3px;
+  color:var(--muted);font-family:var(--serif);font-size:.82rem;
+  padding:.4rem 1rem;cursor:pointer;margin-top:.9rem;
+  transition:all .25s;letter-spacing:.04em;
+}
+.skip-bridge:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,106,.06);}
+.skip-bridge.is-visible{display:inline-flex;animation:skipIn .35s ease;}
+
+/* 过渡剧情段落逐段淡入 */
+.bridge-text{color:var(--paper);}
+.bridge-text p{
+  opacity:0;transform:translateY(12px);
+  transition:opacity .5s ease,transform .5s ease;
+  margin:0 0 .8rem;text-indent:2em;
+}
+.bridge-text p.is-revealed{opacity:1;transform:none;}
+@keyframes skipIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
 /* 三维画卷面板 */
 .scroll__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;}
 .scroll__name{font-size:1.15rem;font-weight:600;letter-spacing:.06em;}
