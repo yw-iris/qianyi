@@ -245,12 +245,182 @@
         `</div>` +
       `</div>` +
       `<div class="quiz-result__actions">` +
+        `<button class="quiz-btn quiz-btn--solid" id="quiz-share">生成我的结果卡</button>` +
         `<a class="quiz-btn quiz-btn--solid" href="index.html#stage/${best}">去体验 ${p.name} 的故事 →</a>` +
         `<button class="quiz-btn quiz-btn--ghost" id="quiz-retry">再测一次</button>` +
       `</div>`;
 
     document.getElementById('quiz-retry').addEventListener('click', reset);
+    document.getElementById('quiz-share').addEventListener('click', () => genQuizShare(p));
     show('result');
+  }
+
+  /* ---------- 人格测试结果分享图 ---------- */
+  function genQuizShare(p) {
+    const W = 1080, H = 1350;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+
+    const color = p.color || '#c9a86a';
+
+    function hexA(hex, a) {
+      const h = (hex || '#c9a86a').replace('#', '');
+      return `rgba(${parseInt(h.substring(0,2),16)},${parseInt(h.substring(2,4),16)},${parseInt(h.substring(4,6),16)},${a})`;
+    }
+
+    function loadImg(url) {
+      return new Promise((resolve) => {
+        if (!url) return resolve(null);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        let done = false;
+        img.onload = () => { if(!done){done=true;resolve(img);} };
+        img.onerror = () => { if(!done){done=true;resolve(null);} };
+        setTimeout(() => { if(!done){done=true;resolve(null);} }, 6000);
+        img.src = url;
+      });
+    }
+
+    loadImg(p.img).then(img => {
+      // 背景
+      if (img && img.width) {
+        const s = Math.max(W / img.width, H / img.height);
+        ctx.drawImage(img, (W - img.width * s) / 2, (H - img.height * s) / 2, img.width * s, img.height * s);
+      } else {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#1e1812'); g.addColorStop(1, '#2a2118');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = hexA(color, 0.14); ctx.fillRect(0, 0, W, H);
+      }
+
+      // 遮罩
+      let top = ctx.createLinearGradient(0, 0, 0, 300);
+      top.addColorStop(0, 'rgba(10,8,5,.72)'); top.addColorStop(1, 'rgba(10,8,5,0)');
+      ctx.fillStyle = top; ctx.fillRect(0, 0, W, 300);
+
+      let bot = ctx.createLinearGradient(0, 550, 0, H);
+      bot.addColorStop(0, 'rgba(8,6,4,0)');
+      bot.addColorStop(.45, 'rgba(8,6,4,.6)');
+      bot.addColorStop(1, 'rgba(8,6,4,.94)');
+      ctx.fillStyle = bot; ctx.fillRect(0, 550, W, H - 550);
+
+      ctx.textAlign = 'center';
+
+      // kicker
+      ctx.fillStyle = color;
+      ctx.font = '600 32px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText('千载一瞬 · 看你更像哪位古人', W / 2, 160);
+
+      // 大标题
+      ctx.fillStyle = color;
+      ctx.font = '600 56px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText('我的古人人格是……', W / 2, 920);
+
+      // 名字
+      ctx.fillStyle = '#f3ead4';
+      ctx.font = '600 140px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText(p.name, W / 2, 1050);
+
+      // tag
+      ctx.fillStyle = hexA(color, .88);
+      ctx.font = '32px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText(p.era + ' · ' + p.tag, W / 2, 1110);
+
+      // blurb (2行)
+      ctx.fillStyle = 'rgba(243,234,212,.78)';
+      ctx.font = '28px "Noto Serif SC","Songti SC","STSong",serif';
+      const txt = p.blurb.replace(/你像.{2,6}——/, '');
+      let line1 = '', line2 = '';
+      const chars = txt.split('');
+      for (const ch of chars) {
+        if (ctx.measureText(line1 + ch).width < W - 120) { line1 += ch; }
+        else if (ctx.measureText(line2 + ch).width < W - 120) { line2 += ch; }
+      }
+      if (line2 && ctx.measureText(line2 + '…').width >= W - 120) {
+        while (line2 && ctx.measureText(line2 + '…').width >= W - 120) line2 = line2.slice(0, -1);
+        line2 += '…';
+      }
+      ctx.fillText(line1, W / 2, 1190);
+      if (line2) ctx.fillText(line2, W / 2, 1238);
+
+      // 引导语
+      ctx.fillStyle = hexA(color, .8);
+      ctx.font = '26px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText('扫码测测你的古人人格', W / 2, 1310);
+
+      // 水印
+      ctx.fillStyle = 'rgba(201,168,106,.64)';
+      ctx.font = '22px "Noto Serif SC","Songti SC","STSong",serif';
+      ctx.fillText('yw-iris.github.io/qianyi/quiz.html', W / 2, 1340);
+
+      // 弹窗
+      showQuizShareModal(c, p);
+    }).catch(() => alert('分享图生成失败，请稍后再试。'));
+  }
+
+  function showQuizShareModal(canvas, p) {
+    let modal = document.getElementById('quizshare-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'quizshare-modal';
+      modal.className = 'sharecard-modal';
+      modal.innerHTML =
+        '<div class="sharecard__panel">' +
+          '<button class="sharecard__close" aria-label="关闭">×</button>' +
+          '<div class="sharecard__canvas-wrap"></div>' +
+          '<div class="sharecard__actions">' +
+            '<button class="btn btn--solid" data-act="download">下载图片</button>' +
+            '<button class="btn btn--ghost" data-act="play">去玩千载一瞬</button>' +
+          '</div>' +
+          '<div class="sharecard__share">' +
+            '<span class="sharecard__share-label">分享到：</span>' +
+            '<button class="sharecard__share-btn" data-act="wechat">微信</button>' +
+            '<button class="sharecard__share-btn" data-act="weibo">微博</button>' +
+          '</div>' +
+          '<p class="sharecard__tip">长按图片也可保存 · 发给朋友，看看他们像哪位古人</p>' +
+        '</div>';
+      document.body.appendChild(modal);
+      modal.querySelector('.sharecard__close').addEventListener('click', () => modal.classList.remove('show'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+    }
+    const wrap = modal.querySelector('.sharecard__canvas-wrap');
+    wrap.innerHTML = '';
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
+    canvas.style.display = 'block';
+    canvas.style.borderRadius = '4px';
+    wrap.appendChild(canvas);
+
+    const txt = `测了「千载一瞬」人格测试，我最像${p.name}——${p.tag}。你也来测测？`;
+    const url = 'https://yw-iris.github.io/qianyi/quiz.html';
+
+    modal.querySelector('[data-act="download"]').onclick = () => {
+      try {
+        const dataUrl = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `千载一瞬-我的古人人格-${p.name}.png`;
+        document.body.appendChild(a); a.click(); a.remove();
+      } catch (e) { alert('当前浏览器限制了图片导出，请长按图片保存。'); }
+    };
+    modal.querySelector('[data-act="play"]').onclick = () => {
+      modal.classList.remove('show');
+      location.href = 'index.html';
+    };
+    modal.querySelector('[data-act="wechat"]').onclick = () => {
+      try {
+        navigator.clipboard.writeText(txt + ' ' + url).then(() => {
+          alert('已复制分享文案到剪贴板！打开微信 → 粘贴发送给好友。');
+        }).catch(() => prompt('请手动复制：', txt + ' ' + url));
+      } catch (e) { prompt('请手动复制：', txt + ' ' + url); }
+    };
+    modal.querySelector('[data-act="weibo"]').onclick = () => {
+      window.open('https://service.weibo.com/share/share.php?' +
+        'title=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url) +
+        '&pic=&searchPic=false&style=simple', '_blank', 'noopener');
+    };
+    modal.classList.add('show');
   }
 
   function reset() {

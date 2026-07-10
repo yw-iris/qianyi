@@ -37,9 +37,24 @@
 
   function nodeKey(charId, nodeId) { return charId + ':' + nodeId; }
 
-  /* 该节点的"历史总人次"基线：380 ~ 4600，像真实流量 */
+  /* 按角色区分「人气」基线（min, max），让统计看起来更真实。
+   * 王羲之/苏轼/王希孟 天然高热度；张择端/李煜/颜真卿 偏小众；
+   * 王安石介于中间。值经过微调使各角色平均差距合理。 */
+  const CHAR_HEAT = {
+    xizhi:       [1100, 5800],   // 书圣，最大众
+    sushi:       [1000, 5200],   // 东坡，极热
+    ximeng:      [800, 4400],    // 千里江山，少年天才热
+    wanganshi:   [600, 3400],    // 拗相公，中热
+    yanzhenqing: [350, 2200],    // 忠烈，偏小众
+    zeduan:      [280, 1900],    // 界画，小众但名作加持
+    liyu:        [250, 1800]     // 词帝，圈内热圈外冷
+  };
+  const DEFAULT_HEAT = [380, 4600]; // 未匹配角色回退
+
+  /* 该节点的"历史总人次"基线：按角色区分热度 */
   function seedTotal(charId, nodeId) {
-    return Math.floor(380 + hash(charId + '|' + nodeId + '|T') * 4220);
+    const [lo, hi] = CHAR_HEAT[charId] || DEFAULT_HEAT;
+    return Math.floor(lo + hash(charId + '|' + nodeId + '|T') * (hi - lo));
   }
   /* 单个选项的权重：0.22 ~ 1.18，保证各选项比例有差异 */
   function optionWeight(charId, nodeId, idx) {

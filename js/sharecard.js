@@ -148,6 +148,14 @@
   }
 
   /* ---------- 弹窗 UI ---------- */
+  function shareText(data) {
+    return `我在「千载一瞬」替${data.name}走到了「${data.endingTitle}」这个结局。你也来试试，看你会把古人带向哪条路。`;
+  }
+
+  function shareUrl(data) {
+    return `https://yw-iris.github.io/qianyi/index.html#stage/${data.charId}`;
+  }
+
   function showOverlay(canvas, data) {
     let modal = document.getElementById('sharecard-modal');
     if (!modal) {
@@ -162,12 +170,18 @@
             '<button class="btn btn--solid" data-act="download">下载卡片</button>' +
             '<button class="btn btn--ghost" data-act="play">去体验 TA 的故事</button>' +
           '</div>' +
+          '<div class="sharecard__share">' +
+            '<span class="sharecard__share-label">分享到：</span>' +
+            '<button class="sharecard__share-btn" data-act="wechat">微信</button>' +
+            '<button class="sharecard__share-btn" data-act="weibo">微博</button>' +
+          '</div>' +
           '<p class="sharecard__tip">长按图片也可保存 · 分享给朋友，看他们解锁谁的结局</p>' +
         '</div>';
       document.body.appendChild(modal);
       modal.querySelector('.sharecard__close').addEventListener('click', () => modal.classList.remove('show'));
       modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
     }
+
     const wrap = modal.querySelector('.sharecard__canvas-wrap');
     wrap.innerHTML = '';
     canvas.style.width = '100%';
@@ -176,11 +190,14 @@
     canvas.style.borderRadius = '4px';
     wrap.appendChild(canvas);
 
+    const txt = shareText(data);
+    const url = shareUrl(data);
+
     modal.querySelector('[data-act="download"]').onclick = () => {
       try {
-        const url = canvas.toDataURL('image/png');
+        const dataUrl = canvas.toDataURL('image/png');
         const a = document.createElement('a');
-        a.href = url;
+        a.href = dataUrl;
         a.download = `千载一瞬-${data.name}-${data.endingTitle}.png`;
         document.body.appendChild(a); a.click(); a.remove();
       } catch (e) {
@@ -191,6 +208,29 @@
       modal.classList.remove('show');
       location.href = 'index.html#stage/' + data.charId;
     };
+
+    /* 微信：复制文本到剪贴板 + 提示（微信不支持 intent URL，靠用户粘贴）*/
+    modal.querySelector('[data-act="wechat"]').onclick = () => {
+      try {
+        navigator.clipboard.writeText(txt + ' ' + url).then(() => {
+          alert('已复制分享文案到剪贴板！\n打开微信 → 粘贴发送给好友，对方点链接即可体验。');
+        }).catch(() => {
+          prompt('请手动复制这段文案，发送给微信好友：', txt + ' ' + url);
+        });
+      } catch (e) {
+        prompt('请手动复制这段文案，发送给微信好友：', txt + ' ' + url);
+      }
+    };
+
+    /* 微博：标准 intent URL */
+    modal.querySelector('[data-act="weibo"]').onclick = () => {
+      const wb = 'https://service.weibo.com/share/share.php?' +
+        'title=' + encodeURIComponent(txt) +
+        '&url=' + encodeURIComponent(url) +
+        '&pic=&searchPic=false&style=simple';
+      window.open(wb, '_blank', 'noopener');
+    };
+
     modal.classList.add('show');
   }
 
