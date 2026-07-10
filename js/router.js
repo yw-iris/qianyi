@@ -17,7 +17,7 @@
       tag: '十八岁天才画师',
       color: '#2e7d6b',
       script: 'js/characters/ximeng.js',
-      thumb: 'assets/images/qianli.jpg'
+      thumb: 'assets/images/qianli.webp'
     },
     {
       id: 'xizhi',
@@ -28,7 +28,7 @@
       tag: '书圣 · 兰亭一序',
       color: '#3a6b8a',
       script: 'js/characters/xizhi.js',
-      thumb: 'assets/images/lanting_thumb.jpg'
+      thumb: 'assets/images/lanting_thumb.webp'
     },
     {
       id: 'yanzhenqing',
@@ -39,7 +39,7 @@
       tag: '忠烈 · 颜筋柳骨',
       color: '#a8422e',
       script: 'js/characters/yanzhenqing.js',
-      thumb: 'assets/images/jizhi_thumb.jpg'
+      thumb: 'assets/images/jizhi_thumb.webp'
     },
     {
       id: 'zeduan',

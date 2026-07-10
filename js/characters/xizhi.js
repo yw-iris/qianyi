@@ -20,7 +20,7 @@ window.CHARACTERS.xizhi = {
     era: '东晋 · 永和九年（353）',
     quote: '「后之视今，亦犹今之视昔。」——王羲之《兰亭序》',
     scrollName: '兰亭序',
-    scrollImage: 'assets/images/lanting.jpg'
+    scrollImage: 'assets/images/lanting.webp'
   },
 
   /* 六个结局：region 即画卷上待拂的尘块（0=最左，5=最右） */

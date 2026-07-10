@@ -9,13 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
   <style>/* 字体加载前降级：防止 FOIT（不可见文本闪烁）*/ body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
   <link rel="stylesheet" href="css/style.css" />
+  <!-- 开幕封面图预加载：首屏最大的视觉元素，提前请求避免白屏 -->
+  <link rel="preload" as="image" href="assets/images/lanting.webp" fetchpriority="high" />
 </head>
 <body>
 
   <!-- ========== 开场（电影感 · 参照 tongjian.yongle.school）========== -->
   <section class="prologue" id="prologue">
     <div class="prologue__intro">
-      <div class="prologue__hero" style="background-image:url('assets/images/lanting.jpg')" aria-hidden="true"></div>
+      <div class="prologue__hero" style="background-image:url('assets/images/lanting.webp')" aria-hidden="true"></div>
       <div class="prologue__scrim" aria-hidden="true"></div>
       <div class="prologue__intro-inner">
         <div class="prologue__kicker reveal" style="--i:4">互动传记 · 分支抉择</div>
@@ -36,7 +38,7 @@
     </div>
 
     <article class="act reveal">
-      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/qianli.jpg')"></div>
+      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/qianli.webp')"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
         <div class="act__no">壹</div>
@@ -48,7 +50,7 @@
     </article>
 
     <article class="act reveal">
-      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/lanting.jpg')"></div>
+      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/lanting.webp')"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
         <div class="act__no">贰</div>
@@ -60,7 +62,7 @@
     </article>
 
     <article class="act act--yan reveal" id="act-yan">
-      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/jizhi.jpg')" id="yan-frame"></div>
+      <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/jizhi.webp')" id="yan-frame"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
         <div class="act__no">叁</div>
@@ -76,7 +78,7 @@
       <div class="prologue-gallery__label">传世真迹 · 千载流传</div>
       <div class="prologue-gallery__grid">
         <div class="pg-card">
-          <div class="pg-card__frame" style="background-image:url('assets/images/qianli.jpg')"></div>
+          <div class="pg-card__frame" style="background-image:url('assets/images/qianli.webp')"></div>
           <div class="pg-card__info">
             <span class="pg-card__no">壹</span>
             <h3 class="pg-card__name">千里江山图</h3>
@@ -84,7 +86,7 @@
           </div>
         </div>
         <div class="pg-card">
-          <div class="pg-card__frame" style="background-image:url('assets/images/lanting.jpg')"></div>
+          <div class="pg-card__frame" style="background-image:url('assets/images/lanting.webp')"></div>
           <div class="pg-card__info">
             <span class="pg-card__no">贰</span>
             <h3 class="pg-card__name">兰亭序</h3>
@@ -92,7 +94,7 @@
           </div>
         </div>
         <div class="pg-card">
-          <div class="pg-card__frame pg-card__frame--yan" style="background-image:url('assets/images/jizhi.jpg')"></div>
+          <div class="pg-card__frame pg-card__frame--yan" style="background-image:url('assets/images/jizhi.webp')"></div>
           <div class="pg-card__info">
             <span class="pg-card__no">叁</span>
             <h3 class="pg-card__name">祭侄文稿</h3>

@@ -18,7 +18,7 @@ window.CHARACTERS.ximeng = {
     era: '北宋 · 宣和三年（1121）',
     quote: '「画的尽头，究竟是什么？」——徽宗赵佶',
     scrollName: '千里江山图',
-    scrollImage: 'assets/paintings/qianli_4k.png'
+    scrollImage: 'assets/images/qianli.webp'
   },
 
   /* 六个结局：region 即画卷上待拂的尘块（0=最左，5=最右） */

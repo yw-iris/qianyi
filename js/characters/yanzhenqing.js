@@ -21,7 +21,7 @@ window.CHARACTERS.yanzhenqing = {
     era: '唐 · 天宝至建中（742–785）',
     quote: '「惟尔挺生，夙标幼德。」——颜真卿《祭侄文稿》',
     scrollName: '祭侄文稿',
-    scrollImage: 'assets/images/jizhi.jpg'
+    scrollImage: 'assets/images/jizhi.webp'
   },
 
   /* 六个结局：region 即画卷上待拂的尘块（0=最左，5=最右） */
