@@ -25,6 +25,10 @@
       this.complete = false;
       this.mode = null;
 
+      // 放大弹窗尘覆盖层同步
+      this._lbOpen = false;
+      this._lbDust = null;
+
       // 双击缩放：开关式放大，到位后交还滚轮自由控制
       this._zoomed = false;    // 双击放大开关
       this._zoomDist = null;   // 目标取景距离；到位后置 null
@@ -108,19 +112,26 @@
     }
 
     _paintDustPattern(ctx, W, H) {
-      // 灰色尘覆盖层：未拂尘区域呈灰色（降低饱和度），拂尘后恢复原色
+      // 未拂尘区：明显的灰白尘覆盖（低饱和、较高不透明度），与拂尘后的原色形成强对比
       ctx.clearRect(0, 0, W, H);
-      // 半透明灰色底 —— 模拟灰白尘土覆盖
-      ctx.fillStyle = 'rgba(180,175,168,0.55)';
+      // 偏冷的灰白底，模拟积尘覆盖
+      ctx.fillStyle = 'rgba(150,148,143,0.72)';
       ctx.fillRect(0, 0, W, H);
-      // 尘斑：不规则灰白色块，模拟不均匀积尘
-      const blobs = 200;
+      // 叠加一层竖向渐变灰，增强"蒙尘"的层次
+      const vg = ctx.createLinearGradient(0, 0, 0, H);
+      vg.addColorStop(0, 'rgba(120,118,112,0.18)');
+      vg.addColorStop(0.5, 'rgba(160,158,152,0.05)');
+      vg.addColorStop(1, 'rgba(110,108,102,0.22)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+      // 尘斑：不规则灰白块，模拟不均匀积尘
+      const blobs = 220;
       for (let i = 0; i < blobs; i++) {
         const x = Math.random() * W, y = Math.random() * H;
-        const r = 8 + Math.random() * 55;
-        const a = 0.08 + Math.random() * 0.28;
+        const r = 10 + Math.random() * 60;
+        const a = 0.12 + Math.random() * 0.34;
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        const tone = Math.random() < 0.5 ? '170,165,155' : '155,150,140';
+        const tone = Math.random() < 0.5 ? '138,135,128' : '118,115,108';
         g.addColorStop(0, `rgba(${tone},${a})`);
         g.addColorStop(1, `rgba(${tone},0)`);
         ctx.fillStyle = g;
@@ -128,20 +139,20 @@
       }
       // 细纹划痕
       ctx.lineWidth = 1;
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 110; i++) {
         const x = Math.random() * W, y = Math.random() * H;
-        const len = 8 + Math.random() * 50;
+        const len = 8 + Math.random() * 55;
         const ang = (Math.random() - 0.5) * 0.5;
-        ctx.strokeStyle = `rgba(120,115,108,${0.05 + Math.random() * 0.10})`;
+        ctx.strokeStyle = `rgba(96,92,85,${0.06 + Math.random() * 0.12})`;
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x + Math.cos(ang) * len, y + Math.sin(ang) * len);
         ctx.stroke();
       }
       // 细密噪点
-      for (let i = 0; i < 1500; i++) {
-        ctx.fillStyle = `rgba(130,125,118,${0.04 + Math.random() * 0.08})`;
-        ctx.fillRect(Math.random() * W, Math.random() * H, 1.2, 1.2);
+      for (let i = 0; i < 1800; i++) {
+        ctx.fillStyle = `rgba(105,102,95,${0.06 + Math.random() * 0.10})`;
+        ctx.fillRect(Math.random() * W, Math.random() * H, 1.3, 1.3);
       }
     }
 
@@ -225,7 +236,7 @@
       this.group.add(this.paintingMesh);
 
       const dustMat = new THREE.MeshBasicMaterial({
-        map: this.dustTex, transparent: true, opacity: 0.92, depthWrite: false
+        map: this.dustTex, transparent: true, opacity: 0.96, depthWrite: false
       });
       this.dustMesh = new THREE.Mesh(geo.clone(), dustMat);
       this.dustMesh.position.z = 0.02;
@@ -264,7 +275,7 @@
             changed = true;
           }
         }
-        if (changed || this.dirty) { this._composeDust(); this.dirty = false; }
+        if (changed || this.dirty) { this._composeDust(); this.dirty = false; if (changed) this.updateLightboxDust(); }
         if (!this.complete && this.target.every((t, i) => this.progress[i] >= 1)) {
           this.complete = true;
           this.controls.autoRotate = true;
@@ -312,6 +323,17 @@
       }
     }
 
+    /* ---------- 放大弹窗尘覆盖：与主视图 6 区状态同步 ---------- */
+    updateLightboxDust() {
+      if (!this._lbOpen || !this._lbDust) return;
+      const strips = this._lbDust.children;
+      for (let i = 0; i < this.regions; i++) {
+        // 未拂尘(target=0)→完全覆盖(opacity=1)；已拂尘(target=1)→透明
+        const cleared = this.target[i] || 0;
+        strips[i].style.opacity = String(1 - cleared);
+      }
+    }
+
     /* ---------- 双击放大：居中弹窗展示画卷全貌，支持缩放看局部 ---------- */
     _openLightbox() {
       const lb = document.getElementById('lightbox');
@@ -327,6 +349,28 @@
       const cap = lb.querySelector('#lb-caption');
       if (cap) cap.textContent = '滚轮缩放观察局部 · 拖拽平移 · 点击空白或按 ESC 退出';
       lb.classList.add('is-show');
+
+      // 将图片包进相对定位的舞台，并在其上叠加 6 区尘覆盖层（与主视图同步）
+      let stage = lb.querySelector('.lightbox__stage');
+      if (!stage) {
+        stage = document.createElement('div');
+        stage.className = 'lightbox__stage';
+        img.parentNode.insertBefore(stage, img);
+        stage.appendChild(img);
+        const dust = document.createElement('div');
+        dust.className = 'lightbox__dust';
+        for (let i = 0; i < this.regions; i++) {
+          const s = document.createElement('div');
+          s.className = 'lb-dust-strip';
+          dust.appendChild(s);
+        }
+        stage.appendChild(dust);
+        this._lbDust = dust;
+      } else {
+        this._lbDust = stage.querySelector('.lightbox__dust');
+      }
+      this._lbOpen = true;
+      this.updateLightboxDust();
 
       // 弹窗图片的缩放 / 平移状态
       let scale = 1, tx = 0, ty = 0, dragging = false, sx = 0, sy = 0, moved = false;
@@ -356,6 +400,7 @@
         lb.classList.remove('is-show');
         resetImg();                 // 清空弹窗图片的缩放/平移变换
         this.resetView();           // 复位外层 3D 视角，退出后不再残留放大状态
+        this._lbOpen = false;
         cleanup();
       };
 
@@ -464,6 +509,7 @@
       } else {
         if (instant) { this.progress[i] = 1; this.dirty = true; }
       }
+      this.updateLightboxDust();
     }
 
     isRegionClear(i) { return this.progress[i] >= 1; }
@@ -479,6 +525,7 @@
         this.dirty = true;
         this._composeDust();
       }
+      this.updateLightboxDust();
     }
 
     loadFile(file) {

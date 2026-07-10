@@ -17,7 +17,7 @@
       tag: '十八岁天才画师',
       color: '#2e7d6b',
       script: 'js/characters/ximeng.js',
-      thumb: 'assets/paintings/qianli_4k.png'
+      thumb: 'assets/images/qianli.jpg'
     },
     {
       id: 'xizhi',

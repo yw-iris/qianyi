@@ -529,11 +529,10 @@
       card.style.setProperty('--i', idx);
 
       const libHtml = book.libraries.map(lib =>
-        `<div class="blib ${lib.available ? '' : 'blib--unavail'}">
+        `<div class="blib">
            <span class="blib__icon">${ICON_BOOK}</span>
            <span class="blib__name">${lib.name}</span>
            <span class="blib__loc">${lib.location}</span>
-           <span class="blib__call">索书号：${lib.callNumber}</span>
          </div>`
       ).join('');
 
@@ -543,7 +542,11 @@
           `<div class="bc__meta">${book.author} · ${book.publisher} (${book.year}) · ISBN ${book.isbn}</div>` +
           `<p class="bc__summary">${book.summary}</p>` +
           (book.libraries && book.libraries.length
-            ? `<div class="bc__libraries"><strong style="font-size:.82rem;color:#5a4a32;display:flex;align-items:center;">${ICON_LIB}馆藏信息</strong>${libHtml}</div>`
+            ? `<div class="bc__libraries">` +
+              `<strong style="font-size:.82rem;color:#5a4a32;display:flex;align-items:center;">${ICON_LIB}馆藏参考</strong>` +
+              `${libHtml}` +
+              `<div class="bc__libnote">以上为收藏相关典籍的公立图书馆；具体馆藏与索书号请以各馆官方目录为准。</div>` +
+            `</div>`
             : '') +
         `</div>`;
 
@@ -585,28 +588,42 @@
       else pause();
     });
 
-    // 进入网页立即播放背景音乐（浏览器需用户手势，页面加载后自动尝试）
-    function tryAutoPlay() {
+    /* 进入网页即尝试播放背景音乐。
+     * 浏览器自动播放策略通常要求一次用户手势，因此分三层兜底：
+     *   1) 初始化后立即尝试（部分浏览器/老访客允许）
+     *   2) 音频可播放(canplay)时再试
+     *   3) 首次用户手势（点击/按键/滚动/进入）时补播
+     */
+    function doPlay() {
       if (!enabled || !audio.paused) return;
       audio.volume = 0;
       play();
       fade(0.5);
     }
-    // DOM 加载完毕后立即尝试（某些浏览器允许）
-    tryAutoPlay();
-    // 如被浏览器阻止，在首次用户手势时重试
-    function autoStart(e) {
+    doPlay();
+    audio.addEventListener('canplay', doPlay);
+    audio.addEventListener('canplaythrough', doPlay);
+
+    function onGesture(e) {
       if (e && e.target && e.target.closest && e.target.closest('#sound-toggle')) return;
-      if (enabled && audio.paused) { audio.volume = 0; play(); fade(0.5); }
+      doPlay();
       if (!audio.paused) {
-        window.removeEventListener('pointerdown', autoStart);
-        window.removeEventListener('keydown', autoStart);
-        window.removeEventListener('scroll', autoStart);
+        window.removeEventListener('pointerdown', onGesture);
+        window.removeEventListener('keydown', onGesture);
+        window.removeEventListener('scroll', onGesture);
       }
     }
-    window.addEventListener('pointerdown', autoStart);
-    window.addEventListener('keydown', autoStart);
-    window.addEventListener('scroll', autoStart);
+    window.addEventListener('pointerdown', onGesture);
+    window.addEventListener('keydown', onGesture);
+    window.addEventListener('scroll', onGesture);
+
+    /* 11MB 音频不在首屏争抢带宽：等首屏渲染完成后再开始缓冲，
+     * 既保证“进去就能播”，又不拖慢页面响应。 */
+    function bufferAudio() {
+      try { audio.load(); } catch (e) {}
+    }
+    if (document.readyState === 'complete') setTimeout(bufferAudio, 800);
+    else window.addEventListener('load', () => setTimeout(bufferAudio, 800));
   }
 
   /* ---------- 开场：顶栏显隐 / 进入 / 颜真卿图替换 ---------- */
