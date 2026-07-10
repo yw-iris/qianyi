@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于 · 千载一瞬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+  <style>body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
+  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/landing.css?v=1" />
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <a class="brand" href="index.html">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></a>
+    <nav class="topnav">
+      <a href="index.html">返回主页</a>
+      <a href="about.html" style="color:var(--gold);">关于</a>
+      <a href="roadmap.html">路线图</a>
+    </nav>
+  </header>
+
+  <!-- 背景音乐开关 -->
+  <button id="sound-toggle" class="sound-toggle" aria-label="背景音乐开关" aria-pressed="true" title="背景音乐">
+    <svg class="sound-toggle__ico" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+      <path class="sound-toggle__wave" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.8 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <line class="sound-toggle__slash" x1="3" y1="3" x2="21" y2="21"/>
+    </svg>
+  </button>
+
+  <!-- ========== Hero ========== -->
+  <section class="lp-hero">
+    <div class="lp-hero__bg" aria-hidden="true"></div>
+    <div class="lp-hero__inner">
+      <div class="lp-kicker reveal">关于项目</div>
+      <h1 class="lp-title reveal" style="--i:1">千载一瞬</h1>
+      <p class="lp-subtitle reveal" style="--i:2">让历史变成选择，而非记忆</p>
+      <p class="lp-desc reveal" style="--i:3">
+        一个关于中国古人的互动传记平台。你不是在阅读他们的故事——你是在替他们做出选择，
+        在命运的岔路口，见证每一笔抉择如何改变一生。
+      </p>
+    </div>
+    <div class="lp-scrollcue" aria-hidden="true">↓</div>
+  </section>
+
+  <!-- ========== 为什么需要它 ========== -->
+  <section class="lp-section" id="why">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">WHY</div>
+      <h2 class="lp-section__title reveal" style="--i:1">
+        历史书会告诉你<br/>
+        <span class="lp-highlight">他们做了什么</span>，<br/>
+        但从不说他们<span class="lp-highlight">放弃了什么</span>
+      </h2>
+      <div class="lp-grid lp-grid--2col reveal" style="--i:2">
+        <div class="lp-card lp-card--dark">
+          <h3 class="lp-card__title">传统历史叙事</h3>
+          <p>按时间线罗列事件，告诉你某人某年做了某事。你只能被动接收"既成事实"，无法感知那些被放弃的可能性。</p>
+          <p class="lp-card__note">"张择端画了《清明上河图》。"——然后呢？他为什么画？如果不画会怎样？</p>
+        </div>
+        <div class="lp-card lp-card--accent">
+          <h3 class="lp-card__title">千载一瞬的做法</h3>
+          <p>让你站在古人的位置上，面对他们曾经面对的选择。每一个选项都引向不同的命运——包括史书上没有记载的那些。</p>
+          <p class="lp-card__note">"徽宗召你入画院，但你也接到了民间画坊的邀约。选哪边？"——这是张择端真实面对过的抉择。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 产品理念 ========== -->
+  <section class="lp-section lp-section--alt" id="idea">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">理念</div>
+      <h2 class="lp-section__title reveal" style="--i:1">
+        互动是手段，<br/>
+        <span class="lp-highlight">「在场」</span>才是目的
+      </h2>
+      <p class="lp-section__intro reveal" style="--i:2">
+        我们不想做一个"历史知识问答"或者"名人故事会"。我们想做的，是让你在某个瞬间觉得——<strong>我就是他</strong>。
+        站在那个命运的岔路口，感受到犹豫、不甘、释然。
+      </p>
+
+      <div class="lp-grid lp-grid--3col reveal" style="--i:3">
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>传世真迹 · 三维拂尘</h3>
+          <p>每解锁一种结局，传世名作上的一层尘埃便会被拂去。全部解锁后，作品以三维之眼重见天日——你看到的不仅是画，更是你亲手揭开的历史。</p>
+        </div>
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3>分支抉择 · 多重结局</h3>
+          <p>每个角色有六种结局，从史实结局到"假如"结局。你每一次的选择都会在抉择之轴上留下痕迹，可以随时回溯、重选。</p>
+        </div>
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.832 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.168 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>延伸阅读 · 馆藏索引</h3>
+          <p>通关后推荐与角色相关的权威传记书籍，并提供国内公立图书馆的馆藏参考信息，从互动体验延伸到深度阅读。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 核心体验 ========== -->
+  <section class="lp-section" id="experience">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">体验</div>
+      <h2 class="lp-section__title reveal" style="--i:1">
+        五步，走进一个古人的一生
+      </h2>
+
+      <div class="lp-steps reveal" style="--i:2">
+        <div class="lp-step">
+          <div class="lp-step__no">01</div>
+          <div class="lp-step__body">
+            <h3>选择一位古人</h3>
+            <p>从人物长廊中选中一位——王希孟的十八岁、王羲之的兰亭雅集、颜真卿的家国忠烈……每位古人都有独特的故事线。</p>
+          </div>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step__no">02</div>
+          <div class="lp-step__body">
+            <h3>在命运的岔路口抉择</h3>
+            <p>每个故事节点都有两个选项，分别指向不同的命运。过渡剧情会在你选择后逐段浮现，营造"历史正在发生"的沉浸感。</p>
+          </div>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step__no">03</div>
+          <div class="lp-step__body">
+            <h3>解锁结局 · 拂去尘埃</h3>
+            <p>每解锁一种结局，对应传世画作上的一块区域便会被"拂尘"——尘埃褪去，真迹渐显。六种结局全部解锁后，画作完全呈现。</p>
+          </div>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step__no">04</div>
+          <div class="lp-step__body">
+            <h3>三维鉴赏传世真迹</h3>
+            <p>通关后，你可以拖拽旋转、缩放观赏三维卷轴。支持双击放大、全屏鉴赏——像在博物馆里亲手展开一幅千年古画。</p>
+          </div>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step__no">05</div>
+          <div class="lp-step__body">
+            <h3>延伸阅读与馆藏查询</h3>
+            <p>查看我们推荐的权威传记书籍，获取国内公立图书馆的馆藏参考信息，从互动体验走向深度阅读。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 和一般历史内容的区别 ========== -->
+  <section class="lp-section lp-section--alt" id="diff">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">区别</div>
+      <h2 class="lp-section__title reveal" style="--i:1">
+        同样是讲历史，<br/>
+        不一样在哪
+      </h2>
+
+      <div class="lp-compare reveal" style="--i:2">
+        <div class="lp-compare__col lp-compare__col--left">
+          <h3>一般的历史内容</h3>
+          <ul>
+            <li>你是一个旁观者，隔着千年看"结果"</li>
+            <li>只有一种叙事——史书上写的那一种</li>
+            <li>看完即走，没有沉淀和归属感</li>
+            <li>冷冰冰的时间线和事件罗列</li>
+            <li>你不知道"如果不这样会怎样"</li>
+          </ul>
+        </div>
+        <div class="lp-compare__col lp-compare__col--right">
+          <h3>千载一瞬</h3>
+          <ul>
+            <li>你是当事人，站在命运的岔路口做选择</li>
+            <li>六种结局——包括史实和"如果"</li>
+            <li>每次选择留下痕迹，解锁进度持久保存</li>
+            <li>传世真迹在你手中逐块拂尘、三维重现</li>
+            <li>每一个"如果"都有一条完整的剧情线</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 数据来源与致谢 ========== -->
+  <section class="lp-section" id="sources">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">致谢</div>
+      <h2 class="lp-section__title reveal" style="--i:1">数据来源与版权</h2>
+      <div class="lp-text-block reveal" style="--i:2">
+        <p>千载一瞬的叙事内容基于各历史人物的传记及相关史料，情节经过互动化改编。传世画作的高清图像来源于 Wikimedia Commons（公有领域），馆藏信息参考自中国国家图书馆、各省级图书馆的公开目录。</p>
+        <p>项目为非商业性质的创作实践，所有内容仅供学习交流。画作图像版权已进入公有领域；如有任何版权疑虑，请联系我们。</p>
+        <p class="lp-text-block__thanks">感谢每一位在历史长河中留下笔墨的人。千年之后，我们仍能通过他们的作品，触摸到那些曾经的温度。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA ========== -->
+  <section class="lp-cta">
+    <div class="lp-cta__inner">
+      <h2 class="reveal">现在，选择一位古人</h2>
+      <p class="reveal" style="--i:1">替他再活一遍。看看你的选择，会把他的命运带向何方。</p>
+      <a class="lp-btn reveal" style="--i:2" href="index.html">进入千载一瞬</a>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <p>千载一瞬 —— 古人互动传记平台</p>
+    <p><a href="about.html">关于项目</a> · <a href="roadmap.html">路线图</a> · <a href="index.html">返回主页</a></p>
+  </footer>
+
+  <script src="js/motion.js?v=3"></script>
+  <script>
+    /* 背景音乐复用 */
+    (function() {
+      const btn = document.getElementById('sound-toggle');
+      const FADE = 1100;
+      let audio = document.getElementById('bgm');
+      if (!audio) {
+        audio = document.createElement('audio');
+        audio.id = 'bgm';
+        audio.loop = true;
+        audio.preload = 'none';
+        audio.src = 'assets/audio/bgm.mp3';
+        document.body.appendChild(audio);
+      }
+      let enabled = true;
+      function fade(to, done) {
+        const start = Math.max(0, Math.min(1, audio.volume || 0));
+        const target = Math.max(0, Math.min(1, to));
+        const t0 = performance.now();
+        (function step(t) {
+          const k = Math.min(1, (t - t0) / FADE);
+          audio.volume = Math.max(0, Math.min(1, start + (target - start) * k));
+          if (k < 1) requestAnimationFrame(step);
+          else if (done) done();
+        })(t0);
+      }
+      function play() { const p = audio.play(); if (p && p.catch) p.catch(() => {}); }
+      function pause() { fade(0, () => audio.pause()); }
+      btn.addEventListener('click', () => {
+        enabled = !enabled;
+        btn.classList.toggle('is-muted', !enabled);
+        btn.setAttribute('aria-pressed', String(enabled));
+        if (enabled) { audio.volume = 0; play(); fade(0.5); }
+        else pause();
+      });
+      function doPlay() {
+        if (!enabled || !audio.paused) return;
+        audio.volume = 0; play(); fade(0.5);
+      }
+      doPlay();
+      audio.addEventListener('canplay', doPlay);
+      function onGesture(e) {
+        if (e && e.target && e.target.closest && e.target.closest('#sound-toggle')) return;
+        doPlay();
+        if (!audio.paused) {
+          window.removeEventListener('pointerdown', onGesture);
+          window.removeEventListener('keydown', onGesture);
+        }
+      }
+      window.addEventListener('pointerdown', onGesture);
+      window.addEventListener('keydown', onGesture);
+    })();
+  </script>
+</body>
+</html>

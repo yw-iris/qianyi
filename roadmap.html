@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>路线图 · 千载一瞬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+  <style>body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
+  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/landing.css?v=1" />
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <a class="brand" href="index.html">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></a>
+    <nav class="topnav">
+      <a href="index.html">返回主页</a>
+      <a href="about.html">关于</a>
+      <a href="roadmap.html" style="color:var(--gold);">路线图</a>
+    </nav>
+  </header>
+
+  <!-- 背景音乐开关 -->
+  <button id="sound-toggle" class="sound-toggle" aria-label="背景音乐开关" aria-pressed="true" title="背景音乐">
+    <svg class="sound-toggle__ico" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+      <path class="sound-toggle__wave" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.8 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <line class="sound-toggle__slash" x1="3" y1="3" x2="21" y2="21"/>
+    </svg>
+  </button>
+
+  <!-- ========== Hero ========== -->
+  <section class="lp-hero lp-hero--roadmap">
+    <div class="lp-hero__bg" aria-hidden="true"></div>
+    <div class="lp-hero__inner">
+      <div class="lp-kicker reveal">路线图</div>
+      <h1 class="lp-title reveal" style="--i:1">我们正在建造什么</h1>
+      <p class="lp-desc reveal" style="--i:2">
+        千载一瞬是一个持续生长的项目。从三位古人开始，逐步扩展人物、功能与体验深度。
+        以下是我们已经完成、正在进行和未来规划的一切。
+      </p>
+    </div>
+    <div class="lp-scrollcue" aria-hidden="true">↓</div>
+  </section>
+
+  <!-- ========== 已完成 ========== -->
+  <section class="lp-section" id="done">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">
+        <span class="lp-badge lp-badge--done">已完成</span>
+      </div>
+      <h2 class="lp-section__title reveal" style="--i:1">v1.0 — 千载初现</h2>
+      <p class="lp-section__intro reveal" style="--i:2">
+        首版已于 2025 年发布，包含核心互动传记体验的完整闭环。
+      </p>
+
+      <div class="lp-grid lp-grid--2col reveal" style="--i:3">
+        <!-- 角色 -->
+        <div class="lp-roadmap-card">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--done">✓</div>
+          <h3>三位首发古人</h3>
+          <ul>
+            <li><strong>王希孟</strong> — 十八岁天才画师，《千里江山图》</li>
+            <li><strong>王羲之</strong> — 书圣，《兰亭序》</li>
+            <li><strong>颜真卿</strong> — 忠烈书家，《祭侄文稿》</li>
+          </ul>
+          <p class="lp-roadmap-card__note">每位角色含 6 种结局、完整分支剧情树、过渡叙事桥段。</p>
+        </div>
+
+        <!-- 核心功能 -->
+        <div class="lp-roadmap-card">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--done">✓</div>
+          <h3>核心互动体验</h3>
+          <ul>
+            <li>分支抉择引擎：选项 → 过渡剧情 → 下一节点</li>
+            <li>三维卷轴拂尘系统（Three.js WebGL）</li>
+            <li>结局图鉴 + 抉择轴线回溯</li>
+            <li>延伸阅读书单 + 图书馆馆藏索引</li>
+            <li>键盘快捷键（1/2 选择，Esc 关闭）</li>
+          </ul>
+        </div>
+
+        <!-- 视觉体验 -->
+        <div class="lp-roadmap-card">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--done">✓</div>
+          <h3>视觉与体验</h3>
+          <ul>
+            <li>电影感开场（Ken Burns 推镜 + 逐行揭示）</li>
+            <li>水墨留白 · 宋体大字编辑式排版</li>
+            <li>自定义光标（墨-ring）</li>
+            <li>滚动揭示动画 + 页面转场墨幕</li>
+            <li>背景音乐（可选关闭）</li>
+          </ul>
+        </div>
+
+        <!-- 性能 -->
+        <div class="lp-roadmap-card">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--done">✓</div>
+          <h3>性能优化</h3>
+          <ul>
+            <li>WebP 图片格式全面转换</li>
+            <li>Three.js 按需动态加载</li>
+            <li>背景音乐延迟缓冲（preload=none）</li>
+            <li>字体 swap + 系统字体降级</li>
+            <li>GitHub Pages 静态托管 + CDN 加速</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 进行中 ========== -->
+  <section class="lp-section lp-section--alt" id="in-progress">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">
+        <span class="lp-badge lp-badge--wip">进行中</span>
+      </div>
+      <h2 class="lp-section__title reveal" style="--i:1">v1.5 — 扩展与打磨</h2>
+      <p class="lp-section__intro reveal" style="--i:2">
+        当前正在推进的内容，预计在未来几周至几个月内逐步上线。
+      </p>
+
+      <div class="lp-grid lp-grid--2col reveal" style="--i:3">
+        <div class="lp-roadmap-card lp-roadmap-card--wip">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--wip">⟳</div>
+          <h3>更多古人角色</h3>
+          <ul>
+            <li><strong>张择端</strong> — 《清明上河图》，界画圣手</li>
+            <li><strong>李煜</strong> — 词中之帝，亡国之君</li>
+            <li><strong>苏轼</strong> — 东坡居士，豪放词祖</li>
+            <li><strong>王安石</strong> — 拗相公，熙宁变法</li>
+          </ul>
+          <p class="lp-roadmap-card__note">角色模块已搭建，剧情树与结局正在丰富中。</p>
+        </div>
+
+        <div class="lp-roadmap-card lp-roadmap-card--wip">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--wip">⟳</div>
+          <h3>剧情深度提升</h3>
+          <ul>
+            <li>为所有角色补齐过渡剧情（bridge）文本</li>
+            <li>增加更多"史实对照"注释</li>
+            <li>优化结局叙事的文学品质</li>
+            <li>多周目彩蛋与隐藏文本</li>
+          </ul>
+        </div>
+
+        <div class="lp-roadmap-card lp-roadmap-card--wip">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--wip">⟳</div>
+          <h3>移动端适配优化</h3>
+          <ul>
+            <li>手机端拂尘交互（触屏滑动拂尘）</li>
+            <li>移动端 3D 性能降级策略</li>
+            <li>响应式排版精调</li>
+          </ul>
+        </div>
+
+        <div class="lp-roadmap-card lp-roadmap-card--wip">
+          <div class="lp-roadmap-card__tag lp-roadmap-card__tag--wip">⟳</div>
+          <h3>落地页与项目站点</h3>
+          <ul>
+            <li>项目介绍页（about）</li>
+            <li>路线图页（roadmap）</li>
+            <li>站点导航与页脚完善</li>
+          </ul>
+          <p class="lp-roadmap-card__note">就是你现在看到的这两个页面。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 未来计划 ========== -->
+  <section class="lp-section" id="future">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">
+        <span class="lp-badge lp-badge--future">计划中</span>
+      </div>
+      <h2 class="lp-section__title reveal" style="--i:1">v2.0 — 千载万象</h2>
+      <p class="lp-section__intro reveal" style="--i:2">
+        这些是更长远的愿景。取决于反馈和资源，优先级可能调整。
+      </p>
+
+      <div class="lp-timeline reveal" style="--i:3">
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>01</span></div>
+          <div class="lp-timeline__body">
+            <h3>声音与氛围</h3>
+            <p>为每个角色定制专属背景音乐；加入环境音效（雨声、研磨声、卷轴展开声）；关键剧情节点触发音效。</p>
+            <span class="lp-timeline__eta">预计：2025 Q3–Q4</span>
+          </div>
+        </div>
+
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>02</span></div>
+          <div class="lp-timeline__body">
+            <h3>多语言支持</h3>
+            <p>英文版本（English），让海外用户也能体验中国古人的互动传记。包含完整的剧情翻译与文化注释。</p>
+            <span class="lp-timeline__eta">预计：2025 Q4</span>
+          </div>
+        </div>
+
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>03</span></div>
+          <div class="lp-timeline__body">
+            <h3>社区与分享</h3>
+            <p>结局分享卡片（生成带画作+结局标题的精美图片）；匿名统计数据（"73% 的人在这里选择了……"）；评论区或留言板。</p>
+            <span class="lp-timeline__eta">预计：2026 Q1</span>
+          </div>
+        </div>
+
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>04</span></div>
+          <div class="lp-timeline__body">
+            <h3>更多时代与人物</h3>
+            <p>扩展至更多朝代：战国（屈原）、汉（司马迁）、唐（李白、杜甫）、宋（李清照、辛弃疾）、明（王阳明）、清（曹雪芹）……</p>
+            <span class="lp-timeline__eta">持续进行中</span>
+          </div>
+        </div>
+
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>05</span></div>
+          <div class="lp-timeline__body">
+            <h3>AI 驱动的动态叙事</h3>
+            <p>探索引入大语言模型，在保持史料准确性的前提下，为用户选择生成更个性化的过渡叙述与结局变体。</p>
+            <span class="lp-timeline__eta">探索阶段</span>
+          </div>
+        </div>
+
+        <div class="lp-timeline__item">
+          <div class="lp-timeline__marker"><span>06</span></div>
+          <div class="lp-timeline__body">
+            <h3>无障碍与可访问性</h3>
+            <p>完整的键盘导航支持、屏幕阅读器适配、减少动效模式增强、高对比度主题。</p>
+            <span class="lp-timeline__eta">持续改进</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 开放参与 ========== -->
+  <section class="lp-section lp-section--alt" id="contribute">
+    <div class="lp-section__inner">
+      <div class="lp-section__label reveal">参与</div>
+      <h2 class="lp-section__title reveal" style="--i:1">这个项目是开放的</h2>
+      <p class="lp-section__intro reveal" style="--i:2">
+        千载一瞬的代码与内容均托管在 GitHub。如果你对历史有研究、擅长写作、或者想做前端开发——欢迎参与。
+      </p>
+
+      <div class="lp-grid lp-grid--3col reveal" style="--i:3">
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>撰写角色剧情</h3>
+          <p>为新的古人编写分支剧情树和结局。需要你对历史人物有深入了解，文笔流畅。</p>
+        </div>
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>前端功能开发</h3>
+          <p>改进三维渲染、添加新交互、优化移动端体验。技术栈：原生 JS + Three.js。</p>
+        </div>
+        <div class="lp-idea-card">
+          <div class="lp-idea-card__icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>内容审校与建议</h3>
+          <p>纠正史料错误、改进叙事逻辑、提出新结局创意。任何形式的反馈都很宝贵。</p>
+        </div>
+      </div>
+
+      <div class="lp-cta-mini reveal" style="--i:4">
+        <a class="lp-btn" href="https://github.com/yw-iris/qianyi" target="_blank" rel="noopener">访问 GitHub 仓库</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA ========== -->
+  <section class="lp-cta">
+    <div class="lp-cta__inner">
+      <h2 class="reveal">这条路还很长</h2>
+      <p class="reveal" style="--i:1">但每一个古人、每一个结局、每一行代码，都在让历史离我们更近一点。</p>
+      <a class="lp-btn reveal" style="--i:2" href="index.html">回到千载一瞬</a>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <p>千载一瞬 —— 古人互动传记平台</p>
+    <p><a href="about.html">关于项目</a> · <a href="roadmap.html">路线图</a> · <a href="index.html">返回主页</a></p>
+  </footer>
+
+  <script src="js/motion.js?v=3"></script>
+  <script>
+    /* 背景音乐复用 */
+    (function() {
+      const btn = document.getElementById('sound-toggle');
+      const FADE = 1100;
+      let audio = document.getElementById('bgm');
+      if (!audio) {
+        audio = document.createElement('audio');
+        audio.id = 'bgm';
+        audio.loop = true;
+        audio.preload = 'none';
+        audio.src = 'assets/audio/bgm.mp3';
+        document.body.appendChild(audio);
+      }
+      let enabled = true;
+      function fade(to, done) {
+        const start = Math.max(0, Math.min(1, audio.volume || 0));
+        const target = Math.max(0, Math.min(1, to));
+        const t0 = performance.now();
+        (function step(t) {
+          const k = Math.min(1, (t - t0) / FADE);
+          audio.volume = Math.max(0, Math.min(1, start + (target - start) * k));
+          if (k < 1) requestAnimationFrame(step);
+          else if (done) done();
+        })(t0);
+      }
+      function play() { const p = audio.play(); if (p && p.catch) p.catch(() => {}); }
+      function pause() { fade(0, () => audio.pause()); }
+      btn.addEventListener('click', () => {
+        enabled = !enabled;
+        btn.classList.toggle('is-muted', !enabled);
+        btn.setAttribute('aria-pressed', String(enabled));
+        if (enabled) { audio.volume = 0; play(); fade(0.5); }
+        else pause();
+      });
+      function doPlay() {
+        if (!enabled || !audio.paused) return;
+        audio.volume = 0; play(); fade(0.5);
+      }
+      doPlay();
+      audio.addEventListener('canplay', doPlay);
+      function onGesture(e) {
+        if (e && e.target && e.target.closest && e.target.closest('#sound-toggle')) return;
+        doPlay();
+        if (!audio.paused) {
+          window.removeEventListener('pointerdown', onGesture);
+          window.removeEventListener('keydown', onGesture);
+        }
+      }
+      window.addEventListener('pointerdown', onGesture);
+      window.addEventListener('keydown', onGesture);
+    })();
+  </script>
+</body>
+</html>
