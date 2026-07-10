@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人格测试 · 看你更像哪位古人 | 千载一瞬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+  <style>body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
+  <link rel="stylesheet" href="css/style.css?v=6" />
+  <link rel="stylesheet" href="css/landing.css?v=1" />
+  <link rel="stylesheet" href="css/quiz.css?v=1" />
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <a class="brand" href="index.html">千载一瞬<span class="brand__en">THE ETERNAL CHOICE</span></a>
+    <nav class="topnav">
+      <a href="index.html">返回主页</a>
+      <a href="about.html">关于项目</a>
+      <a href="roadmap.html">未来方向</a>
+      <a href="quiz.html" style="color:var(--gold);">人格测试</a>
+    </nav>
+  </header>
+
+  <main class="quiz-wrap">
+
+    <!-- 起始屏 -->
+    <section class="quiz-hero quiz-screen" id="screen-start">
+      <div class="quiz-hero__kicker">WHICH ANCIENT SOUL ARE YOU</div>
+      <h1 class="quiz-hero__title">看你更像哪位古人</h1>
+      <div class="quiz-hero__sub">九问测出你的"古人人格"</div>
+      <p class="quiz-hero__desc">
+        王希孟的纯粹、王羲之的风流、颜真卿的铁骨、张择端的温情、<br/>
+        李煜的才情、苏轼的豁达、王安石的孤勇——<b>你骨子里最像谁？</b><br/>
+        做完九道题，看看命运会把你引向哪一位。
+      </p>
+      <button class="quiz-btn quiz-btn--solid" id="quiz-start">开始测试</button>
+    </section>
+
+    <!-- 答题屏 -->
+    <section class="quiz-screen" id="screen-quiz" hidden>
+      <div class="quiz-progress">
+        <div class="quiz-progress__label">
+          <span id="quiz-progress-text">第 1 / 9 题</span>
+          <span id="quiz-progress-pct">11%</span>
+        </div>
+        <div class="quiz-progress__bar"><div class="quiz-progress__fill" id="quiz-progress-fill"></div></div>
+      </div>
+      <div id="quiz-q-host"></div>
+    </section>
+
+    <!-- 结果屏 -->
+    <section class="quiz-screen" id="screen-result" hidden>
+      <div class="quiz-result" id="quiz-result-host"></div>
+    </section>
+
+    <p class="quiz-foot">
+      测完想去体验 TA 的故事？<a href="index.html">进入千载一瞬 →</a>
+    </p>
+  </main>
+
+  <script src="js/quiz.js?v=1"></script>
+</body>
+</html>
