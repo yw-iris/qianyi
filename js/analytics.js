@@ -1,14 +1,20 @@
 /* ============================================================
- *  千载一瞬 · 选项匿名统计（纯前端 · 无后端）
+ *  千载一瞬 · 选项匿名统计
  *  - 真实本地选择：localStorage 累计
  *  - 基线人气：以角色+节点+选项为种子的确定性伪随机，
- *    让首次访问也拥有"看起来真实"的百分比与总人次
+ *    让首次访问 / 后端未配置时也拥有"看起来真实"的百分比与总人次
+ *  - 可选远端后端：配置 workerUrl 后，统计改为读取全站真实聚合
+ *    （Cloudflare Worker 代理 GitHub token，读写仓库 data/stats.json）
  *  - 展示文案："X% 的人在这里选择了此项" / "已有 N 人在此抉择"
  * ============================================================ */
 (function (global) {
   'use strict';
 
   const KEY = 'qy_choicestats_v1';
+
+  let WORKER_URL = '';        // 配置后启用全站真实聚合
+  let remoteCache = null;     // { 'charId:nodeId': [c0, c1, ...] }
+  let remoteTried = false;
 
   /* ---------- 持久化 ---------- */
   function loadDB() {
@@ -40,25 +46,41 @@
     return 0.22 + hash(charId + '|' + nodeId + '|o' + idx) * 0.96;
   }
 
-  /* ---------- 公开 API ---------- */
-
-  /** 记录一次本地选择（在用户点击选项时调用）*/
-  function record(charId, nodeId, choiceIndex) {
-    const db = loadDB();
-    const k = nodeKey(charId, nodeId);
-    if (!db[k]) db[k] = {};
-    db[k][choiceIndex] = (db[k][choiceIndex] || 0) + 1;
-    saveDB(db);
+  /* ---------- 远端后端（GitHub 当数据库）---------- */
+  function configure(opts) {
+    if (opts && opts.workerUrl) {
+      WORKER_URL = String(opts.workerUrl).replace(/\/+$/, '');
+      loadRemote();
+    }
   }
 
-  /**
-   * 计算某节点的统计
-   * @returns {{total:number, topIndex:number, perOption:Array<{count:number,pct:number}>}}
-   */
-  function statsFor(charId, nodeId, numChoices) {
-    const db = loadDB();
-    const local = (db[nodeKey(charId, nodeId)] || {});
+  function loadRemote() {
+    if (!WORKER_URL) return;
+    remoteTried = true;
+    fetch(WORKER_URL + '/stats', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (j && typeof j === 'object') remoteCache = j; })
+      .catch(() => { /* 离线/后端不可用：静默降级为本地+基线 */ });
+  }
 
+  function pushRemote(charId, nodeId, choiceIndex) {
+    if (!WORKER_URL) return;
+    const id = nodeKey(charId, nodeId);
+    fetch(WORKER_URL + '/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, choice: choiceIndex })
+    }).catch(() => { /* 失败不影响体验 */ });
+  }
+
+  /** 优先用远端真实聚合；缺失的节点回退到基线，保证始终"看起来真实" */
+  function baseCountsFor(charId, nodeId, numChoices) {
+    const id = nodeKey(charId, nodeId);
+    if (remoteCache && remoteCache[id]) {
+      const arr = remoteCache[id].slice();
+      while (arr.length < numChoices) arr.push(0);
+      return arr;
+    }
     const weights = [];
     let wsum = 0;
     for (let i = 0; i < numChoices; i++) {
@@ -66,12 +88,34 @@
       weights.push(w); wsum += w;
     }
     const base = seedTotal(charId, nodeId);
+    return weights.map(w => Math.round(base * w / wsum));
+  }
+
+  /* ---------- 公开 API ---------- */
+
+  /** 记录一次选择：本地累计 + 异步上报远端 */
+  function record(charId, nodeId, choiceIndex) {
+    const db = loadDB();
+    const k = nodeKey(charId, nodeId);
+    if (!db[k]) db[k] = {};
+    db[k][choiceIndex] = (db[k][choiceIndex] || 0) + 1;
+    saveDB(db);
+    pushRemote(charId, nodeId, choiceIndex);
+  }
+
+  /**
+   * 计算某节点的统计（合并远端真实聚合 + 本地选择）
+   * @returns {{total:number, topIndex:number, perOption:Array<{count:number,pct:number}>}}
+   */
+  function statsFor(charId, nodeId, numChoices) {
+    const db = loadDB();
+    const local = (db[nodeKey(charId, nodeId)] || {});
+    const base = baseCountsFor(charId, nodeId, numChoices);
 
     const perOption = [];
     let total = 0, top = -1, topIndex = 0;
     for (let i = 0; i < numChoices; i++) {
-      const seeded = Math.round(base * weights[i] / wsum);
-      const count = seeded + (local[i] || 0);
+      const count = (base[i] || 0) + (local[i] || 0);
       total += count;
       perOption.push({ count, pct: 0 });
       if (count > top) { top = count; topIndex = i; }
@@ -80,5 +124,5 @@
     return { total, topIndex, perOption };
   }
 
-  global.ChoiceStats = { record, statsFor };
+  global.ChoiceStats = { record, statsFor, configure };
 })(window);

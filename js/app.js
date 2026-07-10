@@ -228,18 +228,47 @@
     el.chapter.textContent = node.chapter || '';
     el.text.innerHTML = paragraphs(node.text);
     el.choices.innerHTML = '';
+    const choiceEls = [];
     node.choices.forEach((c, i) => {
       const b = document.createElement('button');
       b.className = 'choice';
       b.innerHTML = `<span class="choice__no">${i + 1}</span>` +
         `<span class="choice__txt">${c.text}</span>` +
         `<span class="choice__arrow">→</span>`;
-      b.addEventListener('click', () => playTransition(c));
+      b.addEventListener('click', () => {
+        if (window.ChoiceStats && currentChar) ChoiceStats.record(currentChar.id, state.node, i);
+        playTransition(c);
+      });
       el.choices.appendChild(b);
+      choiceEls.push(b);
     });
     el.choices.classList.remove('is-ending', 'node-choices--hidden');
+    renderChoiceStats(choiceEls);
     renderStageAxis();
     $('#stage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ---------- 选项匿名统计（"X% 的人在这里选择了……"）---------- */
+  function renderChoiceStats(choiceEls) {
+    if (!window.ChoiceStats || !currentChar) return;
+    const stats = ChoiceStats.statsFor(currentChar.id, state.node, choiceEls.length);
+    choiceEls.forEach((btn, i) => {
+      const o = stats.perOption[i];
+      const isTop = i === stats.topIndex;
+      const stat = document.createElement('span');
+      stat.className = 'choice__stat' + (isTop ? ' is-top' : '');
+      stat.innerHTML =
+        `<span class="choice__bar"><span class="choice__fill" style="width:${o.pct}%"></span></span>` +
+        `<span class="choice__pct">${o.pct}%</span>` +
+        (isTop ? `<span class="choice__tag">最多人选</span>` : '');
+      btn.appendChild(stat);
+    });
+    const topLabel = choiceEls[stats.topIndex].querySelector('.choice__txt').textContent;
+    const agg = document.createElement('div');
+    agg.className = 'choices-agg';
+    agg.innerHTML = `已有 <b>${stats.total.toLocaleString('zh-CN')}</b> 人在此抉择 · ` +
+      `<span class="choices-agg__lead">${stats.perOption[stats.topIndex].pct}% 的人在这里选择了「${topLabel}」</span>`;
+    el.choices.appendChild(agg);
   }
 
   /* ---------- 选择后过渡剧情：选项消失→bridge浮现→跳过→下一节点 ---------- */
@@ -508,6 +537,15 @@
     const e = node.ending;
     const allDone = state.unlocked.size >= TOTAL_ENDINGS();
     const endingKey = findEndingNodeId(e.id);
+    const reg = (window.Router && Router.getRegistry().find(r => r.id === currentChar.id)) || {};
+    const SHARE_DATA = {
+      charId: currentChar.id,
+      name: reg.name || (currentChar.meta && currentChar.meta.title) || '',
+      era: (reg.era ? reg.era + (reg.year ? ' · ' + reg.year : '') : ''),
+      color: reg.color || '#c9a86a',
+      endingTitle: meta ? meta.title : '',
+      epilogue: (e && e.epilogue) || ''
+    };
     el.modalBody.innerHTML =
       `<div class="em__chapter">${node.chapter || ''}</div>` +
       `<h2 class="em__title">${meta ? meta.title : ''}</h2>` +
@@ -516,6 +554,7 @@
       `<blockquote class="em__epi">${e.epilogue}</blockquote>` +
       buildAxisHtml(endingKey) +
       `<div class="em__actions">` +
+        `<button class="btn btn--ghost" data-act="share">生成分享卡片</button>` +
         `<button class="btn btn--ghost" data-act="restart">重头再来</button>` +
         `<button class="btn btn--ghost" data-act="gallery">查看图鉴</button>` +
         (allDone && currentChar.books && currentChar.books.length
@@ -529,6 +568,7 @@
     el.modalBody.querySelectorAll('[data-act]').forEach((b) => {
       b.addEventListener('click', () => {
         const act = b.dataset.act;
+        if (act === 'share') { if (window.ShareCard) ShareCard.open(SHARE_DATA); return; }
         closeModal();
         if (act === 'restart') renderNode('start');
         else if (act === 'gallery') el.gallerySection.scrollIntoView({ behavior: 'smooth' });
@@ -754,6 +794,11 @@
 
   /* ---------- 初始化 ---------- */
   function init() {
+    // 选项统计：若已配置远端后端（Cloudflare Worker 代理 GitHub），启用全站真实聚合
+    if (window.ChoiceStats && window.STATS_WORKER_URL) {
+      ChoiceStats.configure({ workerUrl: window.STATS_WORKER_URL });
+    }
+
     // 向 Router 注册回调
     Router.setCallbacks({
       onEnterStage: enterStage,

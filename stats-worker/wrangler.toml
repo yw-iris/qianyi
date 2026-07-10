@@ -1,0 +1,14 @@
+name = "qy-stats-worker"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# 把统计写回这个仓库（与 GitHub Pages 同源项目）
+[vars]
+REPO_OWNER = "yw-iris"
+REPO_NAME  = "qianyi"
+STATS_PATH = "data/stats.json"
+BRANCH_NAME = "main"
+
+# 私钥不要写在这里！用下面命令写入 Worker 的 secret：
+#   wrangler secret put GITHUB_TOKEN
+# GITHUB_TOKEN 用「细粒度个人访问令牌」，仅授予 qianyi 仓库的 Contents: Read and Write
