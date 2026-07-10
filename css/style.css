@@ -191,9 +191,9 @@ kbd{
 .choice:hover .choice__arrow{transform:translateX(4px);color:var(--gold);}
 .story__foot{margin-top:1.4rem;font-size:.78rem;color:var(--muted);}
 
-/* 选项退出动画 */
-.node-choices--hidden .choice{animation:choiceOut .35s ease both;pointer-events:none;}
-.node-choices--hidden .choice:nth-child(2){animation-delay:.05s;}
+/* 选项退出动画（!important 防止被后声明的 choiceIn 覆盖） */
+.node-choices--hidden .choice{animation:choiceOut .35s ease both!important;pointer-events:none;}
+.node-choices--hidden .choice:nth-child(2){animation-delay:.05s!important;}
 @keyframes choiceOut{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(-8px);}}
 
 /* 过渡剧情跳过按钮 */
