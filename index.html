@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
   <style>/* 字体加载前降级：防止 FOIT（不可见文本闪烁）*/ body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
-  <link rel="stylesheet" href="css/style.css?v=6" />
+  <link rel="stylesheet" href="css/style.css?v=7" />
   <!-- 开幕封面图预加载：首屏最大的视觉元素，提前请求避免白屏 -->
   <link rel="preload" as="image" href="assets/images/lanting.webp" fetchpriority="high" />
 </head>
@@ -20,7 +20,11 @@
       <div class="prologue__hero" style="background-image:url('assets/images/lanting.webp')" aria-hidden="true"></div>
       <div class="prologue__scrim" aria-hidden="true"></div>
       <div class="prologue__intro-inner">
-        <div class="prologue__kicker reveal" style="--i:4">互动传记 · 分支抉择</div>
+        <div class="prologue__brand reveal" style="--i:4">
+          <div class="prologue__brand-zh">千载一瞬</div>
+          <div class="prologue__brand-line"></div>
+          <div class="prologue__brand-en">THE ETERNAL CHOICE</div>
+        </div>
         <h1 class="prologue__title reveal" style="--i:6">
           <span class="ml"><span class="ml__i">千年笔墨</span></span>
           <span class="ml"><span class="ml__i">皆成选择</span></span>
@@ -41,11 +45,15 @@
       <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/qianli.webp')"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
-        <div class="act__no">壹</div>
+        <div class="act__header">
+          <div class="act__badge">壹</div>
+          <div class="act__act">ACT · 01</div>
+          <div class="act__header-line"></div>
+        </div>
         <h2 class="act__name">千里江山图</h2>
-        <div class="act__meta">王希孟 · 北宋政和三年（1113）· 绢本青绿设色 · 故宫博物院藏</div>
+        <div class="act__meta">王希孟 · 北宋政和三年(1113) · 绢本青绿设色 · 故宫博物院藏</div>
         <p class="act__line">十八岁少年，以一卷十二丈青绿，惊动千古。</p>
-        <div class="act__src">图源：Wikimedia Commons（公有领域）</div>
+        <div class="act__src">SOURCE · WIKIMEDIA COMMONS(公有领域)</div>
       </div>
     </article>
 
@@ -53,11 +61,15 @@
       <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/lanting.webp')"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
-        <div class="act__no">贰</div>
+        <div class="act__header">
+          <div class="act__badge">贰</div>
+          <div class="act__act">ACT · 02</div>
+          <div class="act__header-line"></div>
+        </div>
         <h2 class="act__name">兰亭序</h2>
-        <div class="act__meta">王羲之 · 东晋永和九年（353）· 冯承素摹本 · 故宫博物院藏</div>
+        <div class="act__meta">王羲之 · 东晋永和九年(353) · 冯承素摹本 · 故宫博物院藏</div>
         <p class="act__line">暮春之初，曲水流觞，天下第一行书就此写就。</p>
-        <div class="act__src">图源：Wikimedia Commons（公有领域）</div>
+        <div class="act__src">SOURCE · WIKIMEDIA COMMONS(公有领域)</div>
       </div>
     </article>
 
@@ -65,11 +77,15 @@
       <div class="act__frame act__frame--scroll" style="background-image:url('assets/images/jizhi.webp')" id="yan-frame"></div>
       <div class="act__shade"></div>
       <div class="act__cap">
-        <div class="act__no">叁</div>
+        <div class="act__header">
+          <div class="act__badge">叁</div>
+          <div class="act__act">ACT · 03</div>
+          <div class="act__header-line"></div>
+        </div>
         <h2 class="act__name">祭侄文稿</h2>
-        <div class="act__meta">颜真卿 · 唐乾元元年（758）· 行书草稿 · 台北故宫博物院藏</div>
+        <div class="act__meta">颜真卿 · 唐乾元元年(758) · 行书草稿 · 台北故宫博物院藏</div>
         <p class="act__line">蘸血带泪的一纸草稿，被誉「天下第二行书」。</p>
-        <div class="act__src">图源：Wikimedia Commons（公有领域）</div>
+        <div class="act__src">SOURCE · WIKIMEDIA COMMONS(公有领域)</div>
       </div>
     </article>
 
