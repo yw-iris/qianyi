@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
   <style>/* 字体加载前降级：防止 FOIT（不可见文本闪烁）*/ body{font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;}</style>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
   <!-- 开幕封面图预加载：首屏最大的视觉元素，提前请求避免白屏 -->
   <link rel="preload" as="image" href="assets/images/lanting.webp" fetchpriority="high" />
 </head>
@@ -260,9 +260,9 @@
 
   <!-- 依赖与脚本：router 先加载以便管理角色模块；motion 在 app 前初始化 -->
   <!-- Three.js 仅在画作副本（张择端/王希孟等）需要 3D 时动态加载 -->
-  <script src="js/router.js"></script>
-  <script src="js/motion.js"></script>
-  <script src="js/viewer.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/router.js?v=3"></script>
+  <script src="js/motion.js?v=3"></script>
+  <script src="js/viewer.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>
